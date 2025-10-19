@@ -4,6 +4,7 @@ import 'design_system/theme/app_theme.dart';
 import 'core/navigation/navigation_manager.dart';
 import 'core/navigation/app_routes.dart';
 import 'shared/l10n/generated/app_localizations.dart';
+import 'features/design_system_demo/design_system_demo_module.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,6 +82,12 @@ class BackstageApp extends StatelessWidget {
         return MaterialPageRoute(
           settings: settings,
           builder: (_) => const DashboardPlaceholder(),
+        );
+
+      case '/demo':
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => DesignSystemDemoModule(),
         );
 
       default:
@@ -183,6 +190,14 @@ class DashboardPlaceholder extends StatelessWidget {
             Text(
               'Dashboard implementation coming in Phase 2',
               style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, '/demo');
+              },
+              icon: const Icon(Icons.palette),
+              label: const Text('View Design System Demo'),
             ),
           ],
         ),
