@@ -67,76 +67,69 @@ class AuthenticationModule extends InfiniteModule {
 
 /// Custom state to provide AuthBloc to all routes
 class _AuthenticationModuleState extends State<AuthenticationModule> {
-  bool _isInitialized = false;
+  late Future<void> _initFuture;
 
   @override
   void initState() {
     super.initState();
-    // Note: widget.start() is already called by InfiniteModule's initState
-    // We just need to wait for it to complete before showing the UI
-    _waitForInitialization();
-  }
-
-  Future<void> _waitForInitialization() async {
-    // Wait a frame to allow InfiniteModule's start() to complete
-    await Future.delayed(Duration.zero);
-    if (mounted && AuthenticationModule.authBloc != null) {
-      setState(() {
-        _isInitialized = true;
-      });
-    } else {
-      // If still not initialized, wait a bit more and retry
-      await Future.delayed(const Duration(milliseconds: 100));
-      if (mounted) {
-        setState(() {
-          _isInitialized = AuthenticationModule.authBloc != null;
-        });
-      }
-    }
+    // Start initialization (this will call dependencies)
+    // Wrap in Future to ensure it returns a Future<void>
+    _initFuture = Future.microtask(() async => await widget.start());
   }
 
   @override
   Widget build(BuildContext context) {
-    // Show loading while initializing dependencies
-    if (!_isInitialized || AuthenticationModule.authBloc == null) {
-      return const Material(
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+    // Use FutureBuilder to wait for initialization
+    return FutureBuilder<void>(
+      future: _initFuture,
+      builder: (context, snapshot) {
+        // Show loading while waiting for initialization
+        if (snapshot.connectionState != ConnectionState.done ||
+            AuthenticationModule.authBloc == null) {
+          return const Material(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
 
-    // Provide AuthBloc to all child routes
-    return BlocProvider<AuthBloc>.value(
-      value: AuthenticationModule.authBloc!,
-      child: PopScope(
-        canPop: !(widget.navigatorKey.currentState?.canPop() ?? false),
-        onPopInvokedWithResult: (didPop, result) {
-          // Handle back button for nested navigation
-          if (!didPop && (widget.navigatorKey.currentState?.canPop() ?? false)) {
-            widget.navigatorKey.currentState?.pop();
-          }
+        // Provide AuthBloc to all child routes
+        return BlocProvider<AuthBloc>.value(
+          value: AuthenticationModule.authBloc!,
+          child: _buildNavigator(),
+        );
+      },
+    );
+  }
+
+  Widget _buildNavigator() {
+    return PopScope(
+      canPop: !(widget.navigatorKey.currentState?.canPop() ?? false),
+      onPopInvokedWithResult: (didPop, result) {
+        // Handle back button for nested navigation
+        if (!didPop && (widget.navigatorKey.currentState?.canPop() ?? false)) {
+          widget.navigatorKey.currentState?.pop();
+        }
+      },
+      child: Navigator(
+        key: widget.navigatorKey,
+        initialRoute: widget.initialRoute ?? widget.routes.first.routeName,
+        observers: widget.observers,
+        onGenerateRoute: (settings) {
+          final routeName = settings.name ?? widget.routes.first.routeName;
+          final args = settings.arguments;
+
+          // Find matching route
+          final route = widget.routes.firstWhere(
+            (r) => r.routeName == routeName,
+            orElse: () => widget.routes.first,
+          );
+
+          return MaterialPageRoute(
+            settings: settings,
+            builder: (context) => route.builder(context, args),
+          );
         },
-        child: Navigator(
-          key: widget.navigatorKey,
-          initialRoute: widget.initialRoute ?? widget.routes.first.routeName,
-          observers: widget.observers,
-          onGenerateRoute: (settings) {
-            final routeName = settings.name ?? widget.routes.first.routeName;
-            final args = settings.arguments;
-
-            // Find matching route
-            final route = widget.routes.firstWhere(
-              (r) => r.routeName == routeName,
-              orElse: () => widget.routes.first,
-            );
-
-            return MaterialPageRoute(
-              settings: settings,
-              builder: (context) => route.builder(context, args),
-            );
-          },
-        ),
       ),
     );
   }
