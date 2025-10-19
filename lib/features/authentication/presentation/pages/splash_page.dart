@@ -6,6 +6,7 @@ import '../../../../design_system/theme/app_dimensions.dart';
 import '../../../../design_system/widgets/indicators/loading_spinner.dart';
 import '../../../../core/navigation/app_routes.dart';
 import '../../../../core/navigation/navigation_manager.dart';
+import '../../../../adapters/dependency_injection/service_locator.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -66,8 +67,8 @@ class _SplashPageState extends State<SplashPage>
           // }
 
           // For now, go to dashboard for all users
-          // Use NavigationManager to access the root navigator
-          NavigationManager().replaceTo(AppRoutes.dashboard);
+          // Use service locator to access NavigationManager
+          serviceLocator<NavigationManager>().replaceTo(AppRoutes.dashboard);
         } else if (state is Unauthenticated) {
           // Navigate within auth module to login
           Navigator.of(context).pushReplacementNamed('/auth/login');

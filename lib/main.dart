@@ -6,29 +6,29 @@ import 'core/navigation/app_routes.dart';
 import 'shared/l10n/generated/app_localizations.dart';
 import 'features/design_system_demo/design_system_demo_module.dart';
 import 'features/authentication/authentication_module.dart';
+import 'adapters/dependency_injection/service_locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // TODO: Initialize dependencies (GetIt)
-  // await _initDependencies();
+  // Initialize dependencies
+  await _initDependencies();
 
   runApp(const BackstageApp());
 }
 
 /// Initialize dependency injection
-/// This is a placeholder for Phase 1
-// Future<void> _initDependencies() async {
-//   final getIt = GetIt.instance;
-//
-//   // Register singletons
-//   getIt.registerSingleton<HttpClient>(HttpClient());
-//   final storage = await LocalStorage.getInstance();
-//   getIt.registerSingleton<LocalStorage>(storage);
-//   getIt.registerSingleton<ConnectivityChecker>(ConnectivityChecker());
-//   getIt.registerSingleton<AnalyticsTracker>(AnalyticsTracker());
-//   getIt.registerSingleton<NavigationManager>(NavigationManager());
-// }
+Future<void> _initDependencies() async {
+  // Register NavigationManager as singleton
+  serviceLocator.registerSingleton<NavigationManager>(NavigationManager());
+
+  // TODO: Register other core services when needed
+  // final storage = await LocalStorage.getInstance();
+  // serviceLocator.registerSingleton<LocalStorage>(storage);
+  // serviceLocator.registerSingleton<HttpClient>(HttpClient());
+  // serviceLocator.registerSingleton<ConnectivityChecker>(ConnectivityChecker());
+  // serviceLocator.registerSingleton<AnalyticsTracker>(AnalyticsTracker());
+}
 
 class BackstageApp extends StatelessWidget {
   const BackstageApp({super.key});
@@ -57,7 +57,7 @@ class BackstageApp extends StatelessWidget {
       locale: const Locale('pt', 'BR'), // Default locale
 
       // Navigation
-      navigatorKey: NavigationManager().navigatorKey,
+      navigatorKey: serviceLocator<NavigationManager>().navigatorKey,
       initialRoute: '/auth', // Start with auth module
       onGenerateRoute: _onGenerateRoute,
     );
@@ -104,7 +104,7 @@ class SplashPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     // Simulate splash screen delay
     Future.delayed(const Duration(seconds: 2), () {
-      NavigationManager().replaceTo(AppRoutes.login);
+      serviceLocator<NavigationManager>().replaceTo(AppRoutes.login);
     });
 
     return Scaffold(
@@ -151,7 +151,7 @@ class LoginPlaceholder extends StatelessWidget {
               const SizedBox(height: 48),
               ElevatedButton(
                 onPressed: () {
-                  NavigationManager().replaceTo(AppRoutes.dashboard);
+                  serviceLocator<NavigationManager>().replaceTo(AppRoutes.dashboard);
                 },
                 child: Text(l10n.login_button),
               ),
@@ -227,7 +227,7 @@ class NotFoundScreen extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
-                NavigationManager().goBack();
+                serviceLocator<NavigationManager>().goBack();
               },
               child: const Text('Go Back'),
             ),

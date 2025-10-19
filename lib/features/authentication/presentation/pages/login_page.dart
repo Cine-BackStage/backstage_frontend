@@ -6,6 +6,7 @@ import '../../../../design_system/theme/app_dimensions.dart';
 import '../../../../design_system/widgets/alerts/cine_snackbar.dart';
 import '../../../../core/navigation/app_routes.dart';
 import '../../../../core/navigation/navigation_manager.dart';
+import '../../../../adapters/dependency_injection/service_locator.dart';
 import '../../domain/entities/credentials.dart';
 import '../../domain/entities/feature_info.dart';
 import '../../authentication_module.dart';
@@ -84,8 +85,8 @@ class _LoginPageState extends State<LoginPage> {
           // }
 
           // For now, go to dashboard for all users
-          // Use NavigationManager to access the root navigator
-          NavigationManager().replaceTo(AppRoutes.dashboard);
+          // Use service locator to access NavigationManager
+          serviceLocator<NavigationManager>().replaceTo(AppRoutes.dashboard);
         } else if (state is AuthError) {
           CineSnackbar.error(
             context,
