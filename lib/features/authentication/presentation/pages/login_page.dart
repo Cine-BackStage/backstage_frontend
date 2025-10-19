@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleForgotPassword() {
-    Navigator.pushNamed(context, '/forgot-password');
+    Navigator.pushNamed(context, '/auth/forgot-password');
   }
 
   @override

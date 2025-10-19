@@ -67,10 +67,10 @@ class _SplashPageState extends State<SplashPage>
           // For now, go to dashboard for all users
           Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
         } else if (state is Unauthenticated) {
-          Navigator.pushReplacementNamed(context, '/login');
+          Navigator.pushReplacementNamed(context, '/auth/login');
         } else if (state is AuthError) {
           // On error, go to login
-          Navigator.pushReplacementNamed(context, '/login');
+          Navigator.pushReplacementNamed(context, '/auth/login');
         }
       },
       child: Scaffold(
