@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/modules/infinite_module.dart';
 import '../../adapters/storage/local_storage.dart';
 import 'data/datasources/auth_remote_datasource.dart';
@@ -15,43 +17,35 @@ import 'presentation/pages/forgot_password_page.dart';
 
 /// Authentication Module
 /// Self-contained module for authentication flow
-class AuthenticationModule extends InfiniteModule {
-  AuthenticationModule({
+class AuthenticationModule extends StatelessWidget {
+  final GlobalKey<NavigatorState>? navigatorKey;
+
+  const AuthenticationModule({
     super.key,
-    super.navigatorKey,
-    super.observers,
-    super.initialRoute = '/splash',
+    this.navigatorKey,
   });
 
   @override
-  List<InfiniteChildRoute> get routes => [
-        // Splash screen - checks auth status
-        InfiniteRoute(
-          routeName: '/splash',
-          builder: (context, args) => const SplashPage(),
-        ),
+  Widget build(BuildContext context) {
+    return FutureBuilder<AuthBloc>(
+      future: createAuthBloc(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          // Show loading while initializing
+          return const Material(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
 
-        // Login screen
-        InfiniteRoute(
-          routeName: '/login',
-          builder: (context, args) => const LoginPage(),
-        ),
-
-        // Forgot password screen
-        InfiniteRoute(
-          routeName: '/forgot-password',
-          builder: (context, args) => const ForgotPasswordPage(),
-        ),
-      ];
-
-  @override
-  List<InjectionContainer> get dependencies => [
-        () async {
-          // TODO: Replace with proper DI container (GetIt)
-          // This is a simplified initialization
-          // In production, use GetIt to register these dependencies globally
-        },
-      ];
+        return BlocProvider<AuthBloc>.value(
+          value: snapshot.data!,
+          child: _AuthNavigator(navigatorKey: navigatorKey),
+        );
+      },
+    );
+  }
 
   /// Create AuthBloc with dependencies
   /// TODO: Move to DI container for better management
@@ -95,5 +89,43 @@ class AuthenticationModule extends InfiniteModule {
       localDataSource: localDataSource,
     );
     return GetFeaturesUseCase(repository);
+  }
+}
+
+/// Internal navigator for authentication module
+class _AuthNavigator extends StatelessWidget {
+  final GlobalKey<NavigatorState>? navigatorKey;
+
+  const _AuthNavigator({this.navigatorKey});
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      key: navigatorKey,
+      initialRoute: '/splash',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/splash':
+            return MaterialPageRoute(
+              settings: settings,
+              builder: (_) => const SplashPage(),
+            );
+          case '/login':
+            return MaterialPageRoute(
+              settings: settings,
+              builder: (_) => const LoginPage(),
+            );
+          case '/forgot-password':
+            return MaterialPageRoute(
+              settings: settings,
+              builder: (_) => const ForgotPasswordPage(),
+            );
+          default:
+            return MaterialPageRoute(
+              builder: (_) => const SplashPage(),
+            );
+        }
+      },
+    );
   }
 }
