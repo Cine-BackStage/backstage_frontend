@@ -1,0 +1,165 @@
+{
+  "@@locale": "pt",
+
+  "appTitle": "Backstage Cinema",
+  "@appTitle": {
+    "description": "Application title"
+  },
+
+  "common_ok": "OK",
+  "common_cancel": "Cancelar",
+  "common_save": "Salvar",
+  "common_delete": "Excluir",
+  "common_edit": "Editar",
+  "common_back": "Voltar",
+  "common_next": "Próximo",
+  "common_search": "Buscar",
+  "common_filter": "Filtrar",
+  "common_loading": "Carregando...",
+  "common_error": "Erro",
+  "common_success": "Sucesso",
+  "common_confirm": "Confirmar",
+
+  "login_title": "Bem-vindo ao Backstage",
+  "login_subtitle": "Sistema de gerenciamento de cinema",
+  "login_cpf_label": "CPF",
+  "login_cpf_hint": "Digite seu CPF",
+  "login_password_label": "Senha",
+  "login_password_hint": "Digite sua senha",
+  "login_button": "Entrar",
+  "login_forgot_password": "Esqueceu sua senha?",
+  "login_error_invalid_credentials": "CPF ou senha inválidos",
+  "login_error_empty_cpf": "Por favor, digite seu CPF",
+  "login_error_empty_password": "Por favor, digite sua senha",
+  "login_error_invalid_cpf": "CPF inválido",
+
+  "features_carousel_pos_title": "Ponto de Venda",
+  "features_carousel_pos_description": "Venda de ingressos e produtos de forma rápida e intuitiva",
+  "features_carousel_sessions_title": "Gestão de Sessões",
+  "features_carousel_sessions_description": "Controle completo de sessões e salas de cinema",
+  "features_carousel_inventory_title": "Controle de Estoque",
+  "features_carousel_inventory_description": "Gerenciamento eficiente de produtos e suprimentos",
+  "features_carousel_reports_title": "Relatórios e Análises",
+  "features_carousel_reports_description": "Dados em tempo real para melhor tomada de decisão",
+
+  "splash_loading": "Carregando...",
+
+  "dashboard_title": "Dashboard",
+  "dashboard_greeting": "Olá, {name}!",
+  "@dashboard_greeting": {
+    "description": "Dashboard greeting message",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "João"
+      }
+    }
+  },
+  "dashboard_sales_today": "Vendas Hoje",
+  "dashboard_tickets_sold": "Ingressos Vendidos",
+  "dashboard_sessions_active": "Sessões Ativas",
+  "dashboard_occupancy_rate": "Taxa de Ocupação",
+
+  "pos_title": "Ponto de Venda",
+  "pos_select_session": "Selecionar Sessão",
+  "pos_select_products": "Adicionar Produtos",
+  "pos_cart_title": "Carrinho",
+  "pos_cart_empty": "Carrinho vazio",
+  "pos_total": "Total",
+  "pos_finalize_sale": "Finalizar Venda",
+  "pos_payment_method": "Forma de Pagamento",
+  "pos_payment_cash": "Dinheiro",
+  "pos_payment_card": "Cartão",
+  "pos_payment_pix": "PIX",
+  "pos_sale_success": "Venda realizada com sucesso!",
+  "pos_sale_error": "Erro ao processar venda",
+
+  "sessions_title": "Sessões",
+  "sessions_scheduled": "Agendada",
+  "sessions_in_progress": "Em Andamento",
+  "sessions_completed": "Finalizada",
+  "sessions_room": "Sala {number}",
+  "@sessions_room": {
+    "description": "Room number label",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "1"
+      }
+    }
+  },
+  "sessions_occupancy": "Ocupação",
+  "sessions_create": "Nova Sessão",
+  "sessions_edit": "Editar Sessão",
+  "sessions_delete_confirm": "Deseja realmente excluir esta sessão?",
+
+  "inventory_title": "Estoque",
+  "inventory_products": "Produtos",
+  "inventory_low_stock": "Estoque Baixo",
+  "inventory_out_of_stock": "Fora de Estoque",
+  "inventory_add_product": "Adicionar Produto",
+  "inventory_edit_product": "Editar Produto",
+  "inventory_product_name": "Nome do Produto",
+  "inventory_product_quantity": "Quantidade",
+  "inventory_product_price": "Preço",
+  "inventory_product_category": "Categoria",
+  "inventory_save_success": "Produto salvo com sucesso",
+  "inventory_save_error": "Erro ao salvar produto",
+
+  "reports_title": "Relatórios",
+  "reports_sales": "Vendas",
+  "reports_sessions": "Sessões",
+  "reports_inventory": "Estoque",
+  "reports_period": "Período",
+  "reports_today": "Hoje",
+  "reports_week": "Semana",
+  "reports_month": "Mês",
+  "reports_custom": "Personalizado",
+  "reports_export": "Exportar",
+  "reports_generate": "Gerar Relatório",
+
+  "profile_title": "Perfil",
+  "profile_name": "Nome",
+  "profile_cpf": "CPF",
+  "profile_role": "Cargo",
+  "profile_cinema": "Cinema",
+  "profile_change_password": "Alterar Senha",
+  "profile_logout": "Sair",
+  "profile_logout_confirm": "Deseja realmente sair?",
+
+  "settings_title": "Configurações",
+  "settings_general": "Geral",
+  "settings_notifications": "Notificações",
+  "settings_appearance": "Aparência",
+  "settings_language": "Idioma",
+  "settings_about": "Sobre",
+
+  "error_network": "Erro de conexão. Verifique sua internet.",
+  "error_server": "Erro no servidor. Tente novamente mais tarde.",
+  "error_unknown": "Erro desconhecido. Tente novamente.",
+  "error_timeout": "Tempo limite excedido. Tente novamente.",
+
+  "validation_required": "Campo obrigatório",
+  "validation_invalid_email": "E-mail inválido",
+  "validation_invalid_cpf": "CPF inválido",
+  "validation_min_length": "Mínimo de {count} caracteres",
+  "@validation_min_length": {
+    "description": "Minimum length validation message",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "6"
+      }
+    }
+  },
+  "validation_max_length": "Máximo de {count} caracteres",
+  "@validation_max_length": {
+    "description": "Maximum length validation message",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "100"
+      }
+    }
+  }
+}

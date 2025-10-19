@@ -1,0 +1,165 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Backstage Cinema",
+  "@appTitle": {
+    "description": "Application title"
+  },
+
+  "common_ok": "OK",
+  "common_cancel": "Cancel",
+  "common_save": "Save",
+  "common_delete": "Delete",
+  "common_edit": "Edit",
+  "common_back": "Back",
+  "common_next": "Next",
+  "common_search": "Search",
+  "common_filter": "Filter",
+  "common_loading": "Loading...",
+  "common_error": "Error",
+  "common_success": "Success",
+  "common_confirm": "Confirm",
+
+  "login_title": "Welcome to Backstage",
+  "login_subtitle": "Cinema management system",
+  "login_cpf_label": "CPF",
+  "login_cpf_hint": "Enter your CPF",
+  "login_password_label": "Password",
+  "login_password_hint": "Enter your password",
+  "login_button": "Sign In",
+  "login_forgot_password": "Forgot your password?",
+  "login_error_invalid_credentials": "Invalid CPF or password",
+  "login_error_empty_cpf": "Please enter your CPF",
+  "login_error_empty_password": "Please enter your password",
+  "login_error_invalid_cpf": "Invalid CPF",
+
+  "features_carousel_pos_title": "Point of Sale",
+  "features_carousel_pos_description": "Quick and intuitive ticket and product sales",
+  "features_carousel_sessions_title": "Session Management",
+  "features_carousel_sessions_description": "Complete control of sessions and cinema rooms",
+  "features_carousel_inventory_title": "Inventory Control",
+  "features_carousel_inventory_description": "Efficient management of products and supplies",
+  "features_carousel_reports_title": "Reports and Analytics",
+  "features_carousel_reports_description": "Real-time data for better decision making",
+
+  "splash_loading": "Loading...",
+
+  "dashboard_title": "Dashboard",
+  "dashboard_greeting": "Hello, {name}!",
+  "@dashboard_greeting": {
+    "description": "Dashboard greeting message",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "dashboard_sales_today": "Sales Today",
+  "dashboard_tickets_sold": "Tickets Sold",
+  "dashboard_sessions_active": "Active Sessions",
+  "dashboard_occupancy_rate": "Occupancy Rate",
+
+  "pos_title": "Point of Sale",
+  "pos_select_session": "Select Session",
+  "pos_select_products": "Add Products",
+  "pos_cart_title": "Cart",
+  "pos_cart_empty": "Empty cart",
+  "pos_total": "Total",
+  "pos_finalize_sale": "Finalize Sale",
+  "pos_payment_method": "Payment Method",
+  "pos_payment_cash": "Cash",
+  "pos_payment_card": "Card",
+  "pos_payment_pix": "PIX",
+  "pos_sale_success": "Sale completed successfully!",
+  "pos_sale_error": "Error processing sale",
+
+  "sessions_title": "Sessions",
+  "sessions_scheduled": "Scheduled",
+  "sessions_in_progress": "In Progress",
+  "sessions_completed": "Completed",
+  "sessions_room": "Room {number}",
+  "@sessions_room": {
+    "description": "Room number label",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "1"
+      }
+    }
+  },
+  "sessions_occupancy": "Occupancy",
+  "sessions_create": "New Session",
+  "sessions_edit": "Edit Session",
+  "sessions_delete_confirm": "Do you really want to delete this session?",
+
+  "inventory_title": "Inventory",
+  "inventory_products": "Products",
+  "inventory_low_stock": "Low Stock",
+  "inventory_out_of_stock": "Out of Stock",
+  "inventory_add_product": "Add Product",
+  "inventory_edit_product": "Edit Product",
+  "inventory_product_name": "Product Name",
+  "inventory_product_quantity": "Quantity",
+  "inventory_product_price": "Price",
+  "inventory_product_category": "Category",
+  "inventory_save_success": "Product saved successfully",
+  "inventory_save_error": "Error saving product",
+
+  "reports_title": "Reports",
+  "reports_sales": "Sales",
+  "reports_sessions": "Sessions",
+  "reports_inventory": "Inventory",
+  "reports_period": "Period",
+  "reports_today": "Today",
+  "reports_week": "Week",
+  "reports_month": "Month",
+  "reports_custom": "Custom",
+  "reports_export": "Export",
+  "reports_generate": "Generate Report",
+
+  "profile_title": "Profile",
+  "profile_name": "Name",
+  "profile_cpf": "CPF",
+  "profile_role": "Role",
+  "profile_cinema": "Cinema",
+  "profile_change_password": "Change Password",
+  "profile_logout": "Logout",
+  "profile_logout_confirm": "Do you really want to logout?",
+
+  "settings_title": "Settings",
+  "settings_general": "General",
+  "settings_notifications": "Notifications",
+  "settings_appearance": "Appearance",
+  "settings_language": "Language",
+  "settings_about": "About",
+
+  "error_network": "Connection error. Check your internet.",
+  "error_server": "Server error. Try again later.",
+  "error_unknown": "Unknown error. Try again.",
+  "error_timeout": "Timeout exceeded. Try again.",
+
+  "validation_required": "Required field",
+  "validation_invalid_email": "Invalid email",
+  "validation_invalid_cpf": "Invalid CPF",
+  "validation_min_length": "Minimum {count} characters",
+  "@validation_min_length": {
+    "description": "Minimum length validation message",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "6"
+      }
+    }
+  },
+  "validation_max_length": "Maximum {count} characters",
+  "@validation_max_length": {
+    "description": "Maximum length validation message",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "100"
+      }
+    }
+  }
+}
