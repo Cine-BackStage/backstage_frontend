@@ -114,15 +114,26 @@ class _AuthenticationModuleState extends State<AuthenticationModule> {
   @override
   void initState() {
     super.initState();
-    _initialize();
+    // Note: widget.start() is already called by InfiniteModule's initState
+    // We just need to wait for it to complete before showing the UI
+    _waitForInitialization();
   }
 
-  Future<void> _initialize() async {
-    await widget.start();
-    if (mounted) {
+  Future<void> _waitForInitialization() async {
+    // Wait a frame to allow InfiniteModule's start() to complete
+    await Future.delayed(Duration.zero);
+    if (mounted && AuthenticationModule.authBloc != null) {
       setState(() {
         _isInitialized = true;
       });
+    } else {
+      // If still not initialized, wait a bit more and retry
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (mounted) {
+        setState(() {
+          _isInitialized = AuthenticationModule.authBloc != null;
+        });
+      }
     }
   }
 

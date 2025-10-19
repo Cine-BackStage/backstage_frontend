@@ -34,8 +34,24 @@ Future<void> _initDependencies() async {
   // serviceLocator.registerSingleton<AnalyticsTracker>(AnalyticsTracker());
 }
 
-class BackstageApp extends StatelessWidget {
+class BackstageApp extends StatefulWidget {
   const BackstageApp({super.key});
+
+  @override
+  State<BackstageApp> createState() => _BackstageAppState();
+}
+
+class _BackstageAppState extends State<BackstageApp> {
+  // Cache module instances to prevent recreation on route changes
+  late final AuthenticationModule _authModule;
+  late final DesignSystemDemoModule _demoModule;
+
+  @override
+  void initState() {
+    super.initState();
+    _authModule = AuthenticationModule();
+    _demoModule = DesignSystemDemoModule();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +91,7 @@ class BackstageApp extends StatelessWidget {
       case '/auth':
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => AuthenticationModule(),
+          builder: (_) => _authModule,
         );
 
       case AppRoutes.dashboard:
@@ -87,7 +103,7 @@ class BackstageApp extends StatelessWidget {
       case '/demo':
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => DesignSystemDemoModule(),
+          builder: (_) => _demoModule,
         );
 
       default:
