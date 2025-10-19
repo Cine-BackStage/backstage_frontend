@@ -9,7 +9,7 @@ import '../../../../core/navigation/navigation_manager.dart';
 import '../../../../adapters/dependency_injection/service_locator.dart';
 import '../../domain/entities/credentials.dart';
 import '../../domain/entities/feature_info.dart';
-import '../../authentication_module.dart';
+import '../../domain/usecases/get_features_usecase.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -35,8 +35,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _loadFeatures() async {
-    // TODO: Move this to a separate use case or BLoC
-    final getFeaturesUseCase = await AuthenticationModule.createGetFeaturesUseCase();
+    // Get use case from service locator
+    final getFeaturesUseCase = serviceLocator<GetFeaturesUseCase>();
     final result = await getFeaturesUseCase();
 
     // Check if widget is still mounted before calling setState

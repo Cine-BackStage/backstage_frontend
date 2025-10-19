@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/modules/infinite_module.dart';
-import '../../adapters/storage/local_storage.dart';
-import 'data/datasources/auth_remote_datasource.dart';
-import 'data/datasources/auth_local_datasource.dart';
-import 'data/repositories/auth_repository_impl.dart';
+import '../../adapters/dependency_injection/service_locator.dart';
 import 'domain/usecases/login_usecase.dart';
 import 'domain/usecases/logout_usecase.dart';
 import 'domain/usecases/check_auth_status_usecase.dart';
 import 'domain/usecases/request_password_reset_usecase.dart';
-import 'domain/usecases/get_features_usecase.dart';
 import 'presentation/bloc/auth_bloc.dart';
 import 'presentation/pages/splash_page.dart';
 import 'presentation/pages/login_page.dart';
@@ -53,55 +49,17 @@ class AuthenticationModule extends InfiniteModule {
   @override
   List<InjectionContainer> get dependencies => [
         () async {
-          // Initialize AuthBloc and dependencies
-          // TODO: Move to proper DI container (GetIt) for better lifecycle management
-          authBloc ??= await _createAuthBloc();
+          // Create AuthBloc using injected dependencies from service locator
+          // Note: BLoC is created here (not registered in service locator)
+          // because it's tied to this module's lifecycle
+          authBloc ??= AuthBloc(
+            loginUseCase: serviceLocator<LoginUseCase>(),
+            logoutUseCase: serviceLocator<LogoutUseCase>(),
+            checkAuthStatusUseCase: serviceLocator<CheckAuthStatusUseCase>(),
+            requestPasswordResetUseCase: serviceLocator<RequestPasswordResetUseCase>(),
+          );
         },
       ];
-
-  /// Create AuthBloc with dependencies
-  /// TODO: Move to DI container for better management
-  static Future<AuthBloc> _createAuthBloc() async {
-    // Initialize storage
-    final storage = await LocalStorage.getInstance();
-
-    // Initialize datasources
-    final remoteDataSource = AuthRemoteDataSourceImpl();
-    final localDataSource = AuthLocalDataSourceImpl(storage);
-
-    // Initialize repository
-    final repository = AuthRepositoryImpl(
-      remoteDataSource: remoteDataSource,
-      localDataSource: localDataSource,
-    );
-
-    // Initialize use cases
-    final loginUseCase = LoginUseCase(repository);
-    final logoutUseCase = LogoutUseCase(repository);
-    final checkAuthStatusUseCase = CheckAuthStatusUseCase(repository);
-    final requestPasswordResetUseCase = RequestPasswordResetUseCase(repository);
-
-    // Create bloc
-    return AuthBloc(
-      loginUseCase: loginUseCase,
-      logoutUseCase: logoutUseCase,
-      checkAuthStatusUseCase: checkAuthStatusUseCase,
-      requestPasswordResetUseCase: requestPasswordResetUseCase,
-    );
-  }
-
-  /// Create GetFeaturesUseCase with dependencies
-  /// TODO: Move to DI container
-  static Future<GetFeaturesUseCase> createGetFeaturesUseCase() async {
-    final storage = await LocalStorage.getInstance();
-    final remoteDataSource = AuthRemoteDataSourceImpl();
-    final localDataSource = AuthLocalDataSourceImpl(storage);
-    final repository = AuthRepositoryImpl(
-      remoteDataSource: remoteDataSource,
-      localDataSource: localDataSource,
-    );
-    return GetFeaturesUseCase(repository);
-  }
 
   @override
   State<InfiniteModule> createState() => _AuthenticationModuleState();

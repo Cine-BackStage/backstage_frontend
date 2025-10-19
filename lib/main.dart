@@ -10,28 +10,16 @@ import 'features/authentication/authentication_module.dart';
 import 'features/authentication/presentation/bloc/auth_bloc.dart';
 import 'features/authentication/presentation/bloc/auth_event.dart';
 import 'features/authentication/presentation/bloc/auth_state.dart';
+import 'adapters/dependency_injection/injection_container.dart';
 import 'adapters/dependency_injection/service_locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize dependencies
-  await _initDependencies();
+  // Initialize all dependencies via central injection container
+  await InjectionContainer.init();
 
   runApp(const BackstageApp());
-}
-
-/// Initialize dependency injection
-Future<void> _initDependencies() async {
-  // Register NavigationManager as singleton
-  serviceLocator.registerSingleton<NavigationManager>(NavigationManager());
-
-  // TODO: Register other core services when needed
-  // final storage = await LocalStorage.getInstance();
-  // serviceLocator.registerSingleton<LocalStorage>(storage);
-  // serviceLocator.registerSingleton<HttpClient>(HttpClient());
-  // serviceLocator.registerSingleton<ConnectivityChecker>(ConnectivityChecker());
-  // serviceLocator.registerSingleton<AnalyticsTracker>(AnalyticsTracker());
 }
 
 class BackstageApp extends StatefulWidget {
