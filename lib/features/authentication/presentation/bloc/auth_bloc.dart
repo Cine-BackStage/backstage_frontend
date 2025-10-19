@@ -66,8 +66,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (failure) {
         log('Login failed: ${failure.message}', name: 'AuthBloc');
         emit(AuthError(failure.message));
-        // Return to unauthenticated after showing error
-        emit(const Unauthenticated());
       },
       (user) {
         log('Login successful: ${user.name}', name: 'AuthBloc');
@@ -104,8 +102,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     PasswordResetRequested event,
     Emitter<AuthState> emit,
   ) async {
-    // Keep current state during password reset
-    final currentState = state;
+    emit(const AuthLoading());
 
     final result = await requestPasswordResetUseCase(event.cpf);
 
@@ -113,16 +110,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (failure) {
         log('Password reset failed: ${failure.message}', name: 'AuthBloc');
         emit(AuthError(failure.message));
-        // Return to previous state
-        if (currentState is Unauthenticated) {
-          emit(const Unauthenticated());
-        }
       },
       (_) {
         log('Password reset requested successfully', name: 'AuthBloc');
         emit(const PasswordResetSuccess());
-        // Return to unauthenticated state
-        emit(const Unauthenticated());
       },
     );
   }

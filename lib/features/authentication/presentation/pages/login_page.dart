@@ -69,6 +69,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
+      listenWhen: (previous, current) {
+        // Only listen to state changes, not the same state
+        return previous != current;
+      },
       listener: (context, state) {
         if (state is Authenticated) {
           // TODO: Navigate based on user role
@@ -81,7 +85,11 @@ class _LoginPageState extends State<LoginPage> {
           // For now, go to dashboard for all users
           Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
         } else if (state is AuthError) {
-          CineSnackbar.error(context, message: state.message);
+          CineSnackbar.error(
+            context,
+            message: state.message,
+            duration: const Duration(seconds: 2),
+          );
         }
       },
       builder: (context, state) {
