@@ -5,6 +5,7 @@ import 'core/navigation/navigation_manager.dart';
 import 'core/navigation/app_routes.dart';
 import 'shared/l10n/generated/app_localizations.dart';
 import 'features/design_system_demo/design_system_demo_module.dart';
+import 'features/authentication/authentication_module.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,7 +58,7 @@ class BackstageApp extends StatelessWidget {
 
       // Navigation
       navigatorKey: NavigationManager().navigatorKey,
-      initialRoute: AppRoutes.splash,
+      initialRoute: '/auth', // Start with auth module
       onGenerateRoute: _onGenerateRoute,
     );
   }
@@ -67,15 +68,10 @@ class BackstageApp extends StatelessWidget {
   Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case AppRoutes.splash:
+      case '/auth':
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => const SplashPlaceholder(),
-        );
-
-      case AppRoutes.login:
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => const LoginPlaceholder(),
+          builder: (_) => AuthenticationModule(),
         );
 
       case AppRoutes.dashboard:
