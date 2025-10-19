@@ -68,7 +68,10 @@ class _SplashPageState extends State<SplashPage>
 
           // For now, go to dashboard for all users
           // Use service locator to access NavigationManager
-          serviceLocator<NavigationManager>().replaceTo(AppRoutes.dashboard);
+          // Clear all auth routes from stack
+          serviceLocator<NavigationManager>().navigateAndRemoveUntil(
+            AppRoutes.dashboard,
+          );
         } else if (state is Unauthenticated) {
           // Navigate within auth module to login
           Navigator.of(context).pushReplacementNamed('/auth/login');

@@ -86,7 +86,10 @@ class _LoginPageState extends State<LoginPage> {
 
           // For now, go to dashboard for all users
           // Use service locator to access NavigationManager
-          serviceLocator<NavigationManager>().replaceTo(AppRoutes.dashboard);
+          // Clear all auth routes from stack
+          serviceLocator<NavigationManager>().navigateAndRemoveUntil(
+            AppRoutes.dashboard,
+          );
         } else if (state is AuthError) {
           CineSnackbar.error(
             context,

@@ -169,10 +169,14 @@ class DashboardPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    // Check if we can go back in the root navigator
+    final canPop = serviceLocator<NavigationManager>().canGoBack();
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.dashboard_title),
+        // Hide back button if dashboard is the root route
+        automaticallyImplyLeading: canPop,
       ),
       body: Center(
         child: Column(
