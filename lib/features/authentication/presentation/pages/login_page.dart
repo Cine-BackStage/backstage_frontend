@@ -37,6 +37,9 @@ class _LoginPageState extends State<LoginPage> {
     final getFeaturesUseCase = await AuthenticationModule.createGetFeaturesUseCase();
     final result = await getFeaturesUseCase();
 
+    // Check if widget is still mounted before calling setState
+    if (!mounted) return;
+
     result.fold(
       (failure) {
         // Failed to load features, use empty list
