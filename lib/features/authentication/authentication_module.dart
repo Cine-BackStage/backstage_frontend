@@ -26,7 +26,8 @@ class AuthenticationModule extends InfiniteModule {
   });
 
   // Store initialized AuthBloc for use in routes
-  static AuthBloc? _authBloc;
+  // Made public so other modules can access it for logout, etc.
+  static AuthBloc? authBloc;
 
   @override
   List<InfiniteChildRoute> get routes => [
@@ -54,7 +55,7 @@ class AuthenticationModule extends InfiniteModule {
         () async {
           // Initialize AuthBloc and dependencies
           // TODO: Move to proper DI container (GetIt) for better lifecycle management
-          _authBloc ??= await _createAuthBloc();
+          authBloc ??= await _createAuthBloc();
         },
       ];
 
@@ -128,7 +129,7 @@ class _AuthenticationModuleState extends State<AuthenticationModule> {
   @override
   Widget build(BuildContext context) {
     // Show loading while initializing dependencies
-    if (!_isInitialized || AuthenticationModule._authBloc == null) {
+    if (!_isInitialized || AuthenticationModule.authBloc == null) {
       return const Material(
         child: Center(
           child: CircularProgressIndicator(),
@@ -138,7 +139,7 @@ class _AuthenticationModuleState extends State<AuthenticationModule> {
 
     // Provide AuthBloc to all child routes
     return BlocProvider<AuthBloc>.value(
-      value: AuthenticationModule._authBloc!,
+      value: AuthenticationModule.authBloc!,
       child: PopScope(
         canPop: !(widget.navigatorKey.currentState?.canPop() ?? false),
         onPopInvokedWithResult: (didPop, result) {

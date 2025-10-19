@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'design_system/theme/app_theme.dart';
 import 'core/navigation/navigation_manager.dart';
 import 'core/navigation/app_routes.dart';
 import 'shared/l10n/generated/app_localizations.dart';
 import 'features/design_system_demo/design_system_demo_module.dart';
 import 'features/authentication/authentication_module.dart';
+import 'features/authentication/presentation/bloc/auth_bloc.dart';
+import 'features/authentication/presentation/bloc/auth_event.dart';
+import 'features/authentication/presentation/bloc/auth_state.dart';
 import 'adapters/dependency_injection/service_locator.dart';
 
 void main() async {
@@ -166,40 +170,67 @@ class LoginPlaceholder extends StatelessWidget {
 class DashboardPlaceholder extends StatelessWidget {
   const DashboardPlaceholder({super.key});
 
+  void _handleLogout(BuildContext context) {
+    // Access AuthBloc and dispatch logout event
+    final authBloc = AuthenticationModule.authBloc;
+    if (authBloc != null) {
+      authBloc.add(const LogoutRequested());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     // Check if we can go back in the root navigator
     final canPop = serviceLocator<NavigationManager>().canGoBack();
+    final authBloc = AuthenticationModule.authBloc;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.dashboard_title),
-        // Hide back button if dashboard is the root route
-        automaticallyImplyLeading: canPop,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              l10n.dashboard_greeting('Usuário'),
-              style: Theme.of(context).textTheme.displayMedium,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Dashboard implementation coming in Phase 2',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/demo');
-              },
-              icon: const Icon(Icons.palette),
-              label: const Text('View Design System Demo'),
+    // Wrap in BlocListener to handle logout state changes
+    return BlocListener<AuthBloc, AuthState>(
+      bloc: authBloc,
+      listener: (context, state) {
+        if (state is Unauthenticated) {
+          // Navigate back to auth module when logged out
+          serviceLocator<NavigationManager>().navigateAndRemoveUntil('/auth');
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.dashboard_title),
+          // Hide back button if dashboard is the root route
+          automaticallyImplyLeading: canPop,
+          actions: [
+            // Logout button
+            IconButton(
+              icon: const Icon(Icons.logout),
+              tooltip: 'Sair',
+              onPressed: () => _handleLogout(context),
             ),
           ],
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                l10n.dashboard_greeting('Usuário'),
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Dashboard implementation coming in Phase 2',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/demo');
+                },
+                icon: const Icon(Icons.palette),
+                label: const Text('View Design System Demo'),
+              ),
+            ],
+          ),
         ),
       ),
     );
