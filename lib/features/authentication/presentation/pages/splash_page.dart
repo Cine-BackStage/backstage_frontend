@@ -5,6 +5,7 @@ import '../../../../design_system/theme/app_text_styles.dart';
 import '../../../../design_system/theme/app_dimensions.dart';
 import '../../../../design_system/widgets/indicators/loading_spinner.dart';
 import '../../../../core/navigation/app_routes.dart';
+import '../../../../core/navigation/navigation_manager.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -59,18 +60,20 @@ class _SplashPageState extends State<SplashPage>
         if (state is Authenticated) {
           // TODO: Navigate based on user role
           // if (state.user.isAdmin) {
-          //   Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+          //   NavigationManager().replaceTo(AppRoutes.dashboard);
           // } else {
-          //   Navigator.pushReplacementNamed(context, AppRoutes.pos);
+          //   NavigationManager().replaceTo(AppRoutes.pos);
           // }
 
           // For now, go to dashboard for all users
-          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+          // Use NavigationManager to access the root navigator
+          NavigationManager().replaceTo(AppRoutes.dashboard);
         } else if (state is Unauthenticated) {
-          Navigator.pushReplacementNamed(context, '/auth/login');
+          // Navigate within auth module to login
+          Navigator.of(context).pushReplacementNamed('/auth/login');
         } else if (state is AuthError) {
           // On error, go to login
-          Navigator.pushReplacementNamed(context, '/auth/login');
+          Navigator.of(context).pushReplacementNamed('/auth/login');
         }
       },
       child: Scaffold(

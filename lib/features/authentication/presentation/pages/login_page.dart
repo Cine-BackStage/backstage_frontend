@@ -5,6 +5,7 @@ import '../../../../design_system/theme/app_text_styles.dart';
 import '../../../../design_system/theme/app_dimensions.dart';
 import '../../../../design_system/widgets/alerts/cine_snackbar.dart';
 import '../../../../core/navigation/app_routes.dart';
+import '../../../../core/navigation/navigation_manager.dart';
 import '../../domain/entities/credentials.dart';
 import '../../domain/entities/feature_info.dart';
 import '../../authentication_module.dart';
@@ -77,13 +78,14 @@ class _LoginPageState extends State<LoginPage> {
         if (state is Authenticated) {
           // TODO: Navigate based on user role
           // if (state.user.isAdmin) {
-          //   Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+          //   NavigationManager().replaceTo(AppRoutes.dashboard);
           // } else {
-          //   Navigator.pushReplacementNamed(context, AppRoutes.pos);
+          //   NavigationManager().replaceTo(AppRoutes.pos);
           // }
 
           // For now, go to dashboard for all users
-          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+          // Use NavigationManager to access the root navigator
+          NavigationManager().replaceTo(AppRoutes.dashboard);
         } else if (state is AuthError) {
           CineSnackbar.error(
             context,
