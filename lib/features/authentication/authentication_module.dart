@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../core/modules/infinite_module.dart';
 import '../../adapters/storage/local_storage.dart';
 import 'data/datasources/auth_remote_datasource.dart';
 import 'data/datasources/auth_local_datasource.dart';

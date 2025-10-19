@@ -56,7 +56,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           );
           // Go back to login after a delay
           Future.delayed(const Duration(seconds: 2), () {
-            if (mounted) {
+            if (mounted && context.mounted) {
               Navigator.pop(context);
             }
           });
