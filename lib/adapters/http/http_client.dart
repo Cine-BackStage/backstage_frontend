@@ -1,11 +1,16 @@
 import 'package:dio/dio.dart';
+import '../storage/local_storage.dart' hide StorageKeys;
+import '../../core/constants/storage_keys.dart';
 
 /// HTTP client adapter for Backstage Cinema
-/// This is a mocked implementation for Phase 1
 class HttpClient {
   late final Dio _dio;
+  final LocalStorage _storage;
 
-  HttpClient({String baseUrl = 'http://localhost:3000'}) {
+  HttpClient({
+    required LocalStorage storage,
+    String baseUrl = 'http://localhost:3000',
+  }) : _storage = storage {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -24,19 +29,32 @@ class HttpClient {
   void _setupInterceptors() {
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) {
-          // TODO: Add authentication token
-          // final token = AuthService.getToken();
-          // if (token != null) {
-          //   options.headers['Authorization'] = 'Bearer $token';
-          // }
+        onRequest: (options, handler) async {
+          // Add authentication token to all requests
+          final token = _storage.getString(StorageKeys.authToken);
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
           return handler.next(options);
         },
         onResponse: (response, handler) {
           return handler.next(response);
         },
-        onError: (error, handler) {
-          // TODO: Add error handling and logging
+        onError: (error, handler) async {
+          // Handle 401 Unauthorized - token expired
+          if (error.response?.statusCode == 401) {
+            // Clear auth data
+            await _storage.remove(StorageKeys.authToken);
+            await _storage.remove(StorageKeys.userCpf);
+            await _storage.remove(StorageKeys.userName);
+            await _storage.remove(StorageKeys.userRole);
+            await _storage.remove(StorageKeys.employeeId);
+            await _storage.remove(StorageKeys.companyId);
+
+            // TODO: Navigate to login screen
+            // This will be handled by the auth bloc listening to token changes
+          }
+
           return handler.next(error);
         },
       ),
