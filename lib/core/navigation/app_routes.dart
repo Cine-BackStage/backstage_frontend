@@ -8,9 +8,12 @@ class AppRoutes {
 
   // Main routes
   static const String dashboard = '/dashboard';
+  static const String alerts = '/alerts';
   static const String pos = '/pos';
   static const String sessions = '/sessions';
   static const String inventory = '/inventory';
+  static const String inventoryLowStock = '/inventory/low-stock';
+  static const String inventoryExpiring = '/inventory/expiring';
   static const String reports = '/reports';
   static const String profile = '/profile';
   static const String settings = '/settings';
