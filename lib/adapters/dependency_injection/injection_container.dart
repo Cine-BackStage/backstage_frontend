@@ -4,6 +4,7 @@ import '../../adapters/storage/local_storage.dart';
 import '../../adapters/http/http_client.dart';
 import '../../core/constants/api_constants.dart';
 import '../../features/authentication/di/auth_injection_container.dart';
+import '../../features/dashboard/di/dashboard_injection_container.dart';
 
 /// Central Dependency Injection Container
 /// Coordinates all module injection containers and core services
@@ -43,8 +44,10 @@ class InjectionContainer {
     // Authentication Module
     await AuthInjectionContainer.init();
 
+    // Dashboard Module
+    await DashboardInjectionContainer.init();
+
     // TODO: Add other feature modules
-    // await DashboardInjectionContainer.init();
     // await PosInjectionContainer.init();
     // await InventoryInjectionContainer.init();
   }
