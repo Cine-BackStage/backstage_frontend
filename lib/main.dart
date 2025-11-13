@@ -10,6 +10,14 @@ import 'features/authentication/presentation/pages/splash_page.dart';
 import 'features/authentication/presentation/pages/login_page.dart';
 import 'features/authentication/presentation/bloc/auth_bloc.dart';
 import 'features/dashboard/presentation/pages/dashboard_page.dart';
+import 'features/dashboard/presentation/pages/alerts_page.dart';
+import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'features/dashboard/presentation/bloc/dashboard_event.dart';
+import 'features/pos/presentation/pages/pos_page.dart';
+import 'features/sessions/presentation/pages/sessions_page.dart';
+import 'features/inventory/presentation/pages/inventory_page.dart';
+import 'features/reports/presentation/pages/reports_page.dart';
+import 'features/profile/presentation/pages/profile_page.dart';
 import 'adapters/dependency_injection/injection_container.dart';
 import 'adapters/dependency_injection/service_locator.dart';
 
@@ -104,6 +112,54 @@ class _BackstageAppState extends State<BackstageApp> {
         route = MaterialPageRoute(
           settings: settings,
           builder: (_) => const DashboardPage(),
+        );
+        break;
+
+      case AppRoutes.alerts:
+        route = MaterialPageRoute(
+          settings: settings,
+          builder: (_) => BlocProvider(
+            create: (context) => serviceLocator<DashboardBloc>()
+              ..add(const LoadDashboardStats()),
+            child: const AlertsPage(),
+          ),
+        );
+        break;
+
+      case AppRoutes.pos:
+        route = MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const PosPage(),
+        );
+        break;
+
+      case AppRoutes.sessions:
+        route = MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const SessionsPage(),
+        );
+        break;
+
+      case AppRoutes.inventory:
+      case AppRoutes.inventoryLowStock:
+      case AppRoutes.inventoryExpiring:
+        route = MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const InventoryPage(),
+        );
+        break;
+
+      case AppRoutes.reports:
+        route = MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const ReportsPage(),
+        );
+        break;
+
+      case AppRoutes.profile:
+        route = MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const ProfilePage(),
         );
         break;
 
