@@ -95,11 +95,13 @@ class _InfiniteModuleState extends State<InfiniteModule> {
   @override
   void initState() {
     super.initState();
+    log('_InfiniteModuleState.initState() for ${widget.runtimeType} with navigatorKey: ${widget.navigatorKey}', name: 'InfiniteModule');
     widget.start();
   }
 
   @override
   Widget build(BuildContext context) {
+    log('_InfiniteModuleState.build() for ${widget.runtimeType} with navigatorKey: ${widget.navigatorKey}', name: 'InfiniteModule');
     return PopScope(
       canPop: !(widget.navigatorKey.currentState?.canPop() ?? false),
       onPopInvokedWithResult: (didPop, result) {
@@ -113,6 +115,7 @@ class _InfiniteModuleState extends State<InfiniteModule> {
         initialRoute: widget._initialRoute,
         observers: widget.observers,
         onGenerateRoute: (settings) {
+          log('Navigator.onGenerateRoute() for ${widget.runtimeType} with route: ${settings.name}', name: 'InfiniteModule');
           final routeName = settings.name ?? widget._initialRoute;
           final args = settings.arguments;
 

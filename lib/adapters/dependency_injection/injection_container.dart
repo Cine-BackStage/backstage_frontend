@@ -1,6 +1,8 @@
 import 'service_locator.dart';
 import '../../core/navigation/navigation_manager.dart';
 import '../../adapters/storage/local_storage.dart';
+import '../../adapters/http/http_client.dart';
+import '../../core/constants/api_constants.dart';
 import '../../features/authentication/di/auth_injection_container.dart';
 
 /// Central Dependency Injection Container
@@ -16,15 +18,22 @@ class InjectionContainer {
 
   /// Initialize core services
   static Future<void> _initCore() async {
-    // Navigation
-    serviceLocator.registerSingleton<NavigationManager>(NavigationManager());
-
-    // Storage
+    // Storage (must be first as HttpClient depends on it)
     final storage = await LocalStorage.getInstance();
     serviceLocator.registerSingleton<LocalStorage>(storage);
 
-    // TODO: Add other core services
-    // serviceLocator.registerSingleton<HttpClient>(HttpClient());
+    // Navigation
+    serviceLocator.registerSingleton<NavigationManager>(NavigationManager());
+
+    // HTTP Client with auth interceptor
+    serviceLocator.registerSingleton<HttpClient>(
+      HttpClient(
+        storage: storage,
+        baseUrl: ApiConstants.baseUrl,
+      ),
+    );
+
+    // TODO: Add other core services when needed
     // serviceLocator.registerSingleton<ConnectivityChecker>(ConnectivityChecker());
     // serviceLocator.registerSingleton<AnalyticsTracker>(AnalyticsTracker());
   }
