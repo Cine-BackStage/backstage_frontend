@@ -1,25 +1,30 @@
 import '../../../adapters/dependency_injection/service_locator.dart';
+import '../../../adapters/http/http_client.dart';
 import '../../../adapters/storage/local_storage.dart';
-import '../data/datasources/auth_remote_datasource.dart';
 import '../data/datasources/auth_local_datasource.dart';
+import '../data/datasources/auth_remote_datasource.dart';
 import '../data/repositories/auth_repository_impl.dart';
 import '../domain/repositories/auth_repository.dart';
+import '../domain/usecases/check_auth_status_usecase.dart';
+import '../domain/usecases/get_current_employee_usecase.dart';
 import '../domain/usecases/login_usecase.dart';
 import '../domain/usecases/logout_usecase.dart';
-import '../domain/usecases/check_auth_status_usecase.dart';
-import '../domain/usecases/request_password_reset_usecase.dart';
-import '../domain/usecases/get_features_usecase.dart';
+import '../presentation/bloc/auth_bloc.dart';
 
-/// Authentication Module Dependency Injection Container
-/// Registers all authentication-related dependencies
+/// Authentication feature dependency injection
 class AuthInjectionContainer {
   static Future<void> init() async {
-    // Data Sources
+    // Data sources
     serviceLocator.registerLazySingleton<AuthRemoteDataSource>(
-      () => AuthRemoteDataSourceImpl(),
+      () => AuthRemoteDataSourceImpl(
+        serviceLocator<HttpClient>(),
+      ),
     );
+
     serviceLocator.registerLazySingleton<AuthLocalDataSource>(
-      () => AuthLocalDataSourceImpl(serviceLocator<LocalStorage>()),
+      () => AuthLocalDataSourceImpl(
+        serviceLocator<LocalStorage>(),
+      ),
     );
 
     // Repository
@@ -30,21 +35,39 @@ class AuthInjectionContainer {
       ),
     );
 
-    // Use Cases
+    // Use cases
     serviceLocator.registerLazySingleton<LoginUseCase>(
-      () => LoginUseCase(serviceLocator<AuthRepository>()),
+      () => LoginUseCaseImpl(
+        serviceLocator<AuthRepository>(),
+      ),
     );
+
     serviceLocator.registerLazySingleton<LogoutUseCase>(
-      () => LogoutUseCase(serviceLocator<AuthRepository>()),
+      () => LogoutUseCaseImpl(
+        serviceLocator<AuthRepository>(),
+      ),
     );
+
     serviceLocator.registerLazySingleton<CheckAuthStatusUseCase>(
-      () => CheckAuthStatusUseCase(serviceLocator<AuthRepository>()),
+      () => CheckAuthStatusUseCaseImpl(
+        serviceLocator<AuthRepository>(),
+      ),
     );
-    serviceLocator.registerLazySingleton<RequestPasswordResetUseCase>(
-      () => RequestPasswordResetUseCase(serviceLocator<AuthRepository>()),
+
+    serviceLocator.registerLazySingleton<GetCurrentEmployeeUseCase>(
+      () => GetCurrentEmployeeUseCaseImpl(
+        serviceLocator<AuthRepository>(),
+      ),
     );
-    serviceLocator.registerLazySingleton<GetFeaturesUseCase>(
-      () => GetFeaturesUseCase(serviceLocator<AuthRepository>()),
+
+    // BLoC
+    serviceLocator.registerFactory<AuthBloc>(
+      () => AuthBloc(
+        loginUseCase: serviceLocator<LoginUseCase>(),
+        logoutUseCase: serviceLocator<LogoutUseCase>(),
+        checkAuthStatusUseCase: serviceLocator<CheckAuthStatusUseCase>(),
+        getCurrentEmployeeUseCase: serviceLocator<GetCurrentEmployeeUseCase>(),
+      ),
     );
   }
 }

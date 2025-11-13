@@ -1,9 +1,9 @@
-import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/usecases/usecase.dart';
+import '../../domain/usecases/check_auth_status_usecase.dart';
+import '../../domain/usecases/get_current_employee_usecase.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
-import '../../domain/usecases/check_auth_status_usecase.dart';
-import '../../domain/usecases/request_password_reset_usecase.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -12,108 +12,92 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUseCase loginUseCase;
   final LogoutUseCase logoutUseCase;
   final CheckAuthStatusUseCase checkAuthStatusUseCase;
-  final RequestPasswordResetUseCase requestPasswordResetUseCase;
+  final GetCurrentEmployeeUseCase getCurrentEmployeeUseCase;
 
   AuthBloc({
     required this.loginUseCase,
     required this.logoutUseCase,
     required this.checkAuthStatusUseCase,
-    required this.requestPasswordResetUseCase,
+    required this.getCurrentEmployeeUseCase,
   }) : super(const AuthInitial()) {
-    on<CheckAuthStatusRequested>(_onCheckAuthStatusRequested);
+    on<AuthCheckRequested>(_onAuthCheckRequested);
     on<LoginRequested>(_onLoginRequested);
     on<LogoutRequested>(_onLogoutRequested);
-    on<PasswordResetRequested>(_onPasswordResetRequested);
   }
 
-  Future<void> _onCheckAuthStatusRequested(
-    CheckAuthStatusRequested event,
+  /// Handle auth check event
+  Future<void> _onAuthCheckRequested(
+    AuthCheckRequested event,
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
 
-    final result = await checkAuthStatusUseCase();
+    final result = await checkAuthStatusUseCase.call(const NoParams());
 
-    result.fold(
-      (failure) {
-        log('Auth check failed: ${failure.message}', name: 'AuthBloc');
+    await result.fold(
+      (failure) async {
         emit(const Unauthenticated());
       },
-      (user) {
-        if (user != null) {
-          log('User authenticated: ${user.name}', name: 'AuthBloc');
-          emit(Authenticated(user));
+      (isAuthenticated) async {
+        if (isAuthenticated) {
+          // Get current employee data
+          final employeeResult = await getCurrentEmployeeUseCase.call(const NoParams());
+          employeeResult.fold(
+            (failure) => emit(const Unauthenticated()),
+            (employee) => emit(Authenticated(employee)),
+          );
         } else {
-          log('No user authenticated', name: 'AuthBloc');
           emit(const Unauthenticated());
         }
       },
     );
   }
 
+  /// Handle login event
   Future<void> _onLoginRequested(
     LoginRequested event,
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
 
-    // TODO: Add input validation here
-    // TODO: Add analytics event for login attempt
-
-    final result = await loginUseCase(event.credentials);
+    final result = await loginUseCase.call(
+      LoginParams(
+        employeeId: event.employeeId,
+        password: event.password,
+      ),
+    );
 
     result.fold(
       (failure) {
-        log('Login failed: ${failure.message}', name: 'AuthBloc');
+        // Log detailed error to console
+        print('[AuthBloc] Login failed: ${failure.message}');
         emit(AuthError(failure.message));
       },
-      (user) {
-        log('Login successful: ${user.name}', name: 'AuthBloc');
-        // TODO: Add analytics event for successful login
-        emit(Authenticated(user));
+      (employee) {
+        print('[AuthBloc] Login successful: ${employee.fullName}');
+        emit(Authenticated(employee));
       },
     );
   }
 
+  /// Handle logout event
   Future<void> _onLogoutRequested(
     LogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
+    print('[AuthBloc] Logout requested');
     emit(const AuthLoading());
 
-    // TODO: Add analytics event for logout
-
-    final result = await logoutUseCase();
+    final result = await logoutUseCase.call(const NoParams());
 
     result.fold(
       (failure) {
-        log('Logout failed: ${failure.message}', name: 'AuthBloc');
-        // Even if logout fails, clear local state
-        emit(const Unauthenticated());
-      },
-      (_) {
-        log('Logout successful', name: 'AuthBloc');
-        emit(const Unauthenticated());
-      },
-    );
-  }
-
-  Future<void> _onPasswordResetRequested(
-    PasswordResetRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    emit(const AuthLoading());
-
-    final result = await requestPasswordResetUseCase(event.cpf);
-
-    result.fold(
-      (failure) {
-        log('Password reset failed: ${failure.message}', name: 'AuthBloc');
+        print('[AuthBloc] Logout failed: ${failure.message}');
         emit(AuthError(failure.message));
       },
       (_) {
-        log('Password reset requested successfully', name: 'AuthBloc');
-        emit(const PasswordResetSuccess());
+        print('[AuthBloc] Logout successful');
+        emit(const Unauthenticated());
       },
     );
   }

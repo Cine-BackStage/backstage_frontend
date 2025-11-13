@@ -1,24 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../../design_system/theme/app_colors.dart';
-import '../../../../design_system/theme/app_text_styles.dart';
-import '../../../../design_system/theme/app_dimensions.dart';
-import '../../../../design_system/widgets/inputs/cine_text_field.dart';
-import '../../../../design_system/widgets/inputs/cine_password_field.dart';
-import '../../../../design_system/widgets/buttons/primary_button.dart';
-import '../../../../design_system/widgets/buttons/ghost_button.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../shared/utils/validators/field_validator.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
+import '../bloc/auth_state.dart';
 
 /// Login form widget
 class LoginForm extends StatefulWidget {
-  final VoidCallback onForgotPassword;
-  final void Function(String cpf, String password) onLogin;
-  final bool isLoading;
-
-  const LoginForm({
-    super.key,
-    required this.onForgotPassword,
-    required this.onLogin,
-    this.isLoading = false,
-  });
+  const LoginForm({super.key});
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -26,42 +15,26 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  final _cpfController = TextEditingController();
+  final _employeeIdController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  String? _cpfError;
-  String? _passwordError;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _cpfController.dispose();
+    _employeeIdController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   void _handleLogin() {
-    setState(() {
-      _cpfError = null;
-      _passwordError = null;
-    });
-
-    // Basic validation
-    // TODO: Use proper CPF validator from shared utils
-    if (_cpfController.text.isEmpty) {
-      setState(() {
-        _cpfError = 'Por favor, digite seu CPF';
-      });
-      return;
+    if (_formKey.currentState?.validate() ?? false) {
+      context.read<AuthBloc>().add(
+            LoginRequested(
+              employeeId: _employeeIdController.text.trim(),
+              password: _passwordController.text,
+            ),
+          );
     }
-
-    if (_passwordController.text.isEmpty) {
-      setState(() {
-        _passwordError = 'Por favor, digite sua senha';
-      });
-      return;
-    }
-
-    widget.onLogin(_cpfController.text, _passwordController.text);
   }
 
   @override
@@ -71,87 +44,75 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // CPF Field (using design system component)
-          CineTextField(
-            label: 'CPF',
-            hint: '000.000.000-00',
-            controller: _cpfController,
-            errorText: _cpfError,
-            keyboardType: TextInputType.number,
-            enabled: !widget.isLoading,
-            prefixIcon: const Icon(Icons.person_outline),
-            // TODO: Add CPF input formatter from shared utils
+          // Employee ID field
+          TextFormField(
+            controller: _employeeIdController,
+            decoration: InputDecoration(
+              labelText: 'ID do Funcionário',
+              hintText: 'Digite seu ID',
+              prefixIcon: const Icon(Icons.badge_outlined),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.next,
+            validator: (value) => FieldValidator.required(value, fieldName: 'ID do funcionário'),
+            enabled: context.read<AuthBloc>().state is! AuthLoading,
           ),
-          const SizedBox(height: AppDimensions.spacing16),
+          const SizedBox(height: 16),
 
-          // Password Field (using design system component)
-          CinePasswordField(
-            label: 'Senha',
-            hint: 'Digite sua senha',
+          // Password field
+          TextFormField(
             controller: _passwordController,
-            errorText: _passwordError,
-            enabled: !widget.isLoading,
-          ),
-          const SizedBox(height: AppDimensions.spacing12),
-
-          // Forgot Password Link
-          Align(
-            alignment: Alignment.centerRight,
-            child: GhostButton(
-              label: 'Esqueceu sua senha?',
-              onPressed: widget.isLoading ? null : widget.onForgotPassword,
+            decoration: InputDecoration(
+              labelText: 'Senha',
+              hintText: 'Digite sua senha',
+              prefixIcon: const Icon(Icons.lock_outline),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
+            obscureText: _obscurePassword,
+            textInputAction: TextInputAction.done,
+            onFieldSubmitted: (_) => _handleLogin(),
+            validator: (value) => FieldValidator.required(value, fieldName: 'Senha'),
+            enabled: context.read<AuthBloc>().state is! AuthLoading,
           ),
-          const SizedBox(height: AppDimensions.spacing24),
+          const SizedBox(height: 24),
 
-          // Login Button (using design system component)
-          PrimaryButton(
-            label: 'Entrar',
-            onPressed: widget.isLoading ? null : _handleLogin,
-            isLoading: widget.isLoading,
-          ),
-          const SizedBox(height: AppDimensions.spacing16),
+          // Login button
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              final isLoading = state is AuthLoading;
 
-          // Login hints (dev only)
-          // TODO: Remove in production build
-          _buildLoginHints(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoginHints() {
-    return Container(
-      padding: const EdgeInsets.all(AppDimensions.spacing12),
-      decoration: BoxDecoration(
-        color: AppColors.grayCurtain.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-        border: Border.all(
-          color: AppColors.alertInfo.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Usuários de teste:',
-            style: AppTextStyles.bodySmall.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppColors.alertInfo,
-            ),
-          ),
-          const SizedBox(height: AppDimensions.spacing8),
-          Text(
-            'Admin: 123.456.789-00 / admin123',
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textMuted,
-            ),
-          ),
-          Text(
-            'Funcionário: 987.654.321-00 / employee123',
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textMuted,
-            ),
+              return FilledButton(
+                onPressed: isLoading ? null : _handleLogin,
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  isLoading ? 'Entrando...' : 'Entrar',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
