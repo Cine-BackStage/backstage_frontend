@@ -1,16 +1,21 @@
 import 'package:dartz/dartz.dart';
-import '../entities/user.dart';
-import '../errors/auth_exceptions.dart';
+import '../../../../core/errors/failures.dart';
+import '../../../../core/usecases/usecase.dart';
 import '../repositories/auth_repository.dart';
 
-/// Check authentication status use case
-class CheckAuthStatusUseCase {
+/// Check authentication status use case interface
+abstract class CheckAuthStatusUseCase {
+  Future<Either<Failure, bool>> call(NoParams params);
+}
+
+/// Check authentication status use case implementation
+class CheckAuthStatusUseCaseImpl implements CheckAuthStatusUseCase {
   final AuthRepository repository;
 
-  const CheckAuthStatusUseCase(this.repository);
+  CheckAuthStatusUseCaseImpl(this.repository);
 
-  Future<Either<AuthException, User?>> call() async {
-    // TODO: Add token refresh logic if token is about to expire
-    return await repository.checkAuthStatus();
+  @override
+  Future<Either<Failure, bool>> call(NoParams params) async {
+    return await repository.isAuthenticated();
   }
 }

@@ -1,27 +1,18 @@
 import 'package:dartz/dartz.dart';
-import '../entities/user.dart';
-import '../entities/credentials.dart';
-import '../entities/feature_info.dart';
-import '../errors/auth_exceptions.dart';
+import '../../../../core/errors/failures.dart';
+import '../entities/employee.dart';
 
-/// Authentication repository contract
+/// Authentication repository interface
 abstract class AuthRepository {
-  /// Login with credentials
-  Future<Either<AuthException, User>> login(Credentials credentials);
+  /// Login with employee credentials
+  Future<Either<Failure, Employee>> login(String employeeId, String password);
 
-  /// Logout current user
-  Future<Either<AuthException, void>> logout();
+  /// Logout (clear stored credentials)
+  Future<Either<Failure, void>> logout();
 
-  /// Check if user is authenticated
-  Future<Either<AuthException, User?>> checkAuthStatus();
+  /// Check if user is authenticated (has valid token)
+  Future<Either<Failure, bool>> isAuthenticated();
 
-  /// Get current authenticated user
-  Future<Either<AuthException, User?>> getCurrentUser();
-
-  /// Request password reset
-  /// TODO: Implement email/SMS integration for password reset
-  Future<Either<AuthException, void>> requestPasswordReset(String cpf);
-
-  /// Get feature info for carousel
-  Future<Either<AuthException, List<FeatureInfo>>> getFeatures();
+  /// Get current employee from storage
+  Future<Either<Failure, Employee>> getCurrentEmployee();
 }

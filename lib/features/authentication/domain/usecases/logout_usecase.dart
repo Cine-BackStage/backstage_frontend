@@ -1,16 +1,21 @@
 import 'package:dartz/dartz.dart';
-import '../errors/auth_exceptions.dart';
+import '../../../../core/errors/failures.dart';
+import '../../../../core/usecases/usecase.dart';
 import '../repositories/auth_repository.dart';
 
-/// Logout use case
-class LogoutUseCase {
+/// Logout use case interface
+abstract class LogoutUseCase {
+  Future<Either<Failure, void>> call(NoParams params);
+}
+
+/// Logout use case implementation
+class LogoutUseCaseImpl implements LogoutUseCase {
   final AuthRepository repository;
 
-  const LogoutUseCase(this.repository);
+  LogoutUseCaseImpl(this.repository);
 
-  Future<Either<AuthException, void>> call() async {
-    // TODO: Add analytics event for logout
-    // TODO: Clear any cached data
+  @override
+  Future<Either<Failure, void>> call(NoParams params) async {
     return await repository.logout();
   }
 }

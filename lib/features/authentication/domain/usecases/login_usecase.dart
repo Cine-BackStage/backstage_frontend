@@ -1,18 +1,32 @@
 import 'package:dartz/dartz.dart';
-import '../entities/user.dart';
-import '../entities/credentials.dart';
-import '../errors/auth_exceptions.dart';
+import '../../../../core/errors/failures.dart';
+import '../entities/employee.dart';
 import '../repositories/auth_repository.dart';
 
-/// Login use case
-class LoginUseCase {
+/// Login use case interface
+abstract class LoginUseCase {
+  Future<Either<Failure, Employee>> call(LoginParams params);
+}
+
+/// Login use case implementation
+class LoginUseCaseImpl implements LoginUseCase {
   final AuthRepository repository;
 
-  const LoginUseCase(this.repository);
+  LoginUseCaseImpl(this.repository);
 
-  Future<Either<AuthException, User>> call(Credentials credentials) async {
-    // TODO: Add input validation before calling repository
-    // TODO: Add rate limiting for failed login attempts
-    return await repository.login(credentials);
+  @override
+  Future<Either<Failure, Employee>> call(LoginParams params) async {
+    return await repository.login(params.employeeId, params.password);
   }
+}
+
+/// Login parameters
+class LoginParams {
+  final String employeeId;
+  final String password;
+
+  LoginParams({
+    required this.employeeId,
+    required this.password,
+  });
 }
