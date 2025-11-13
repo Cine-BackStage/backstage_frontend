@@ -1,94 +1,73 @@
-import '../../../../adapters/storage/local_storage.dart';
-import '../models/user_dto.dart';
+import 'dart:convert';
+import '../../../../adapters/storage/local_storage.dart' hide StorageKeys;
+import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/errors/exceptions.dart';
+import '../models/employee_model.dart';
 
-/// Abstract local data source for authentication
+/// Authentication local data source interface
 abstract class AuthLocalDataSource {
-  Future<void> saveAuthToken(String token, DateTime expiresAt);
-  Future<String?> getAuthToken();
-  Future<void> saveUser(UserDto user);
-  Future<UserDto?> getUser();
-  Future<void> clearAuth();
-  Future<bool> isTokenExpired();
+  Future<void> cacheToken(String token);
+  Future<String?> getCachedToken();
+  Future<void> cacheEmployee(EmployeeModel employee);
+  Future<EmployeeModel> getCachedEmployee();
+  Future<void> clearAuthData();
 }
 
-/// Implementation of local data source using SharedPreferences
+/// Authentication local data source implementation
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   final LocalStorage storage;
 
-  const AuthLocalDataSourceImpl(this.storage);
+  AuthLocalDataSourceImpl(this.storage);
 
   @override
-  Future<void> saveAuthToken(String token, DateTime expiresAt) async {
-    // TODO: Consider using flutter_secure_storage for production
+  Future<void> cacheToken(String token) async {
     await storage.setString(StorageKeys.authToken, token);
-    await storage.setString(
-      'auth_token_expiry',
-      expiresAt.toIso8601String(),
-    );
   }
 
   @override
-  Future<String?> getAuthToken() async {
+  Future<String?> getCachedToken() async {
     return storage.getString(StorageKeys.authToken);
   }
 
   @override
-  Future<void> saveUser(UserDto user) async {
-    await storage.setString(StorageKeys.userId, user.id);
-    await storage.setString(StorageKeys.userCpf, user.cpf);
-    await storage.setString(StorageKeys.userName, user.name);
-    await storage.setString(StorageKeys.userRole, user.role);
-    if (user.cinemaId != null) {
-      await storage.setString(StorageKeys.cinemaId, user.cinemaId!);
-    }
-    if (user.cinemaName != null) {
-      await storage.setString(StorageKeys.cinemaName, user.cinemaName!);
+  Future<void> cacheEmployee(EmployeeModel employee) async {
+    // Cache employee data
+    await storage.setString(StorageKeys.userCpf, employee.cpf);
+    await storage.setString(StorageKeys.userName, employee.fullName);
+    await storage.setString(StorageKeys.userRole, employee.role);
+    await storage.setString(StorageKeys.userEmail, employee.email);
+    await storage.setString(StorageKeys.employeeId, employee.employeeId);
+    await storage.setString(StorageKeys.companyId, employee.companyId);
+
+    // Cache full employee object as JSON
+    final employeeJson = jsonEncode(employee.toJson());
+    await storage.setString('cached_employee', employeeJson);
+  }
+
+  @override
+  Future<EmployeeModel> getCachedEmployee() async {
+    try {
+      final employeeJson = storage.getString('cached_employee');
+      if (employeeJson == null) {
+        throw AppException(message: 'No cached employee found');
+      }
+
+      final employeeMap = jsonDecode(employeeJson) as Map<String, dynamic>;
+      return EmployeeModel.fromJson(employeeMap);
+    } catch (e) {
+      throw AppException(message: 'Failed to get cached employee: ${e.toString()}');
     }
   }
 
   @override
-  Future<UserDto?> getUser() async {
-    final userId = storage.getString(StorageKeys.userId);
-    if (userId == null) return null;
-
-    final cpf = storage.getString(StorageKeys.userCpf);
-    final name = storage.getString(StorageKeys.userName);
-    final role = storage.getString(StorageKeys.userRole);
-
-    if (cpf == null || name == null || role == null) return null;
-
-    return UserDto(
-      id: userId,
-      cpf: cpf,
-      name: name,
-      role: role,
-      cinemaId: storage.getString(StorageKeys.cinemaId),
-      cinemaName: storage.getString(StorageKeys.cinemaName),
-    );
-  }
-
-  @override
-  Future<void> clearAuth() async {
+  Future<void> clearAuthData() async {
     await storage.remove(StorageKeys.authToken);
-    await storage.remove('auth_token_expiry');
-    await storage.remove(StorageKeys.userId);
     await storage.remove(StorageKeys.userCpf);
     await storage.remove(StorageKeys.userName);
     await storage.remove(StorageKeys.userRole);
-    await storage.remove(StorageKeys.cinemaId);
-    await storage.remove(StorageKeys.cinemaName);
-  }
-
-  @override
-  Future<bool> isTokenExpired() async {
-    final expiryString = storage.getString('auth_token_expiry');
-    if (expiryString == null) return true;
-
-    try {
-      final expiryDate = DateTime.parse(expiryString);
-      return DateTime.now().isAfter(expiryDate);
-    } catch (e) {
-      return true;
-    }
+    await storage.remove(StorageKeys.userEmail);
+    await storage.remove(StorageKeys.employeeId);
+    await storage.remove(StorageKeys.companyId);
+    await storage.remove('cached_employee');
   }
 }
