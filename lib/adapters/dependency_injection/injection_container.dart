@@ -5,6 +5,7 @@ import '../../adapters/http/http_client.dart';
 import '../../core/constants/api_constants.dart';
 import '../../features/authentication/di/auth_injection_container.dart';
 import '../../features/dashboard/di/dashboard_injection_container.dart';
+import '../../features/pos/di/pos_injection_container.dart';
 
 /// Central Dependency Injection Container
 /// Coordinates all module injection containers and core services
@@ -47,8 +48,10 @@ class InjectionContainer {
     // Dashboard Module
     await DashboardInjectionContainer.init();
 
+    // POS Module
+    await PosInjectionContainer.init();
+
     // TODO: Add other feature modules
-    // await PosInjectionContainer.init();
     // await InventoryInjectionContainer.init();
   }
 }

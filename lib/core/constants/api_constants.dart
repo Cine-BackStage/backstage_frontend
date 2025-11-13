@@ -25,14 +25,15 @@ class ApiConstants {
 
   // Sales
   static const String sales = '/api/sales';
-  static String saleDetails(int id) => '/api/sales/$id';
-  static String saleItems(int saleId) => '/api/sales/$saleId/items';
-  static String saleItemRemove(int saleId, int itemId) => '/api/sales/$saleId/items/$itemId';
-  static String saleDiscount(int saleId) => '/api/sales/$saleId/discount';
-  static String saleFinalize(int saleId) => '/api/sales/$saleId/finalize';
-  static String saleCancel(int saleId) => '/api/sales/$saleId/cancel';
-  static String saleRefund(int saleId) => '/api/sales/$saleId/refund';
-  static String salePayments(int saleId) => '/api/sales/$saleId/payments';
+  static String saleDetails(String id) => '/api/sales/$id';
+  static String saleItems(String saleId) => '/api/sales/$saleId/items';
+  static String saleItemRemove(String saleId, String itemId) => '/api/sales/$saleId/items/$itemId';
+  static const String saleDiscountValidate = '/api/sales/discount/validate';
+  static String saleDiscount(String saleId) => '/api/sales/$saleId/discount';
+  static String saleFinalize(String saleId) => '/api/sales/$saleId/finalize';
+  static String saleCancel(String saleId) => '/api/sales/$saleId/cancel';
+  static String saleRefund(String saleId) => '/api/sales/$saleId/refund';
+  static String salePayments(String saleId) => '/api/sales/$saleId/payments';
 
   // Inventory
   static const String inventory = '/api/inventory';

@@ -14,6 +14,7 @@ import 'features/dashboard/presentation/pages/alerts_page.dart';
 import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'features/pos/presentation/pages/pos_page.dart';
+import 'features/pos/presentation/bloc/pos_bloc.dart';
 import 'features/sessions/presentation/pages/sessions_page.dart';
 import 'features/inventory/presentation/pages/inventory_page.dart';
 import 'features/reports/presentation/pages/reports_page.dart';
@@ -129,7 +130,10 @@ class _BackstageAppState extends State<BackstageApp> {
       case AppRoutes.pos:
         route = MaterialPageRoute(
           settings: settings,
-          builder: (_) => const PosPage(),
+          builder: (_) => BlocProvider(
+            create: (context) => serviceLocator<PosBloc>(),
+            child: const PosPage(),
+          ),
         );
         break;
 
