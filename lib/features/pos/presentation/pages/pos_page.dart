@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../adapters/dependency_injection/service_locator.dart';
+import '../../../../shared/utils/formatters/date_formatter.dart';
+import '../../../sessions/domain/services/seat_reservation_manager.dart';
+import '../../../sessions/presentation/bloc/sessions_bloc.dart';
+import '../../../sessions/presentation/pages/seat_selection_page.dart';
 import '../bloc/pos_bloc.dart';
 import '../bloc/pos_event.dart';
 import '../bloc/pos_state.dart';
@@ -8,6 +13,7 @@ import '../widgets/shopping_cart_panel.dart';
 import '../widgets/payment_dialog.dart';
 import '../widgets/discount_dialog.dart';
 import '../widgets/sale_complete_dialog.dart';
+import '../widgets/session_selection_dialog.dart';
 
 /// POS (Point of Sale) main page
 class PosPage extends StatelessWidget {
@@ -30,6 +36,9 @@ class PosPage extends StatelessWidget {
               );
             },
             saleCompleted: (sale) {
+              // Release all seat reservations for this sale
+              SeatReservationManager().releaseSaleReservations(sale.id);
+
               showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -254,8 +263,89 @@ class PosPage extends StatelessWidget {
                   ],
                 ),
         ),
+        // Add ticket sales button when there's an active sale
+        if (hasActiveSale && saleId != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _showSessionSelectionDialog(context),
+                icon: const Icon(Icons.movie),
+                label: const Text('Vender Ingressos'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[700],
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          ),
         ProductGrid(products: products),
       ],
+    );
+  }
+
+  void _showSessionSelectionDialog(BuildContext context) {
+    // Capture PosBloc reference before navigation
+    final posBloc = context.read<PosBloc>();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => BlocProvider(
+        create: (context) => serviceLocator<SessionsBloc>(),
+        child: SessionSelectionDialog(
+          onSessionSelected: (sessionId) {
+            Navigator.of(dialogContext).pop();
+            // Navigate to seat selection for POS
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => BlocProvider(
+                  create: (context) => serviceLocator<SessionsBloc>(),
+                  child: SeatSelectionPage(
+                    sessionId: sessionId,
+                    readOnly: false,
+                    onTicketsSelected: (sessionId, selectedSeats, session) {
+                      // Get current sale ID
+                      final currentState = posBloc.state;
+                      String? saleId;
+                      if (currentState is PosSaleInProgress) {
+                        saleId = currentState.sale.id;
+                      }
+
+                      if (saleId != null) {
+                        // Reserve seats locally for UI feedback
+                        final seatIds = selectedSeats.map((s) => s.id).toList();
+                        SeatReservationManager().reserveSeats(saleId, sessionId, seatIds);
+
+                        // Format session date and time
+                        final sessionDate = DateFormatter.date(session.startTime);
+                        final sessionTime = DateFormatter.time(session.startTime);
+
+                        // Add selected seats to POS cart using captured posBloc
+                        // The bloc will create backend sale if needed and reserve seats via API
+                        for (final seat in selectedSeats) {
+                          posBloc.add(
+                            AddItemToCart(
+                              productSku: 'TICKET-${seat.id}',
+                              description: '${session.movieTitle} - ${seat.seatNumber}\n$sessionDate às $sessionTime - ${session.roomName}',
+                              unitPrice: seat.price,
+                              quantity: 1,
+                              sessionId: sessionId,
+                              seatId: seat.id,
+                            ),
+                          );
+                        }
+                      }
+
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -302,6 +392,14 @@ class PosPage extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
+
+              // Get current sale ID before cancelling
+              final currentState = context.read<PosBloc>().state;
+              if (currentState is PosSaleInProgress) {
+                // Release all seat reservations for this sale
+                SeatReservationManager().releaseSaleReservations(currentState.sale.id);
+              }
+
               context.read<PosBloc>().add(const CancelSale());
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
