@@ -15,7 +15,9 @@ import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'features/pos/presentation/pages/pos_page.dart';
 import 'features/pos/presentation/bloc/pos_bloc.dart';
-import 'features/sessions/presentation/pages/sessions_page.dart';
+import 'features/sessions/presentation/pages/sessions_list_page.dart';
+import 'features/sessions/presentation/pages/seat_selection_page.dart';
+import 'features/sessions/presentation/bloc/sessions_bloc.dart';
 import 'features/inventory/presentation/pages/inventory_page.dart';
 import 'features/reports/presentation/pages/reports_page.dart';
 import 'features/profile/presentation/pages/profile_page.dart';
@@ -140,7 +142,10 @@ class _BackstageAppState extends State<BackstageApp> {
       case AppRoutes.sessions:
         route = MaterialPageRoute(
           settings: settings,
-          builder: (_) => const SessionsPage(),
+          builder: (_) => BlocProvider(
+            create: (context) => serviceLocator<SessionsBloc>(),
+            child: const SessionsListPage(),
+          ),
         );
         break;
 
@@ -179,6 +184,33 @@ class _BackstageAppState extends State<BackstageApp> {
         break;
 
       default:
+        // Handle dynamic routes (with parameters)
+        if (routeName.startsWith('/sessions/') && routeName.contains('/seats')) {
+          // Extract session ID from route like "/sessions/{uuid}/seats"
+          final sessionId = routeName.split('/')[2];
+
+          // Get readOnly parameter from route arguments
+          final args = settings.arguments as Map<String, dynamic>?;
+          final readOnly = args?['readOnly'] as bool? ?? false;
+
+          print('[main.dart] Seat selection route - sessionId: $sessionId, readOnly: $readOnly, args: $args');
+
+          if (sessionId.isNotEmpty) {
+            route = MaterialPageRoute(
+              settings: settings,
+              builder: (_) => BlocProvider(
+                create: (context) => serviceLocator<SessionsBloc>(),
+                child: SeatSelectionPage(
+                  sessionId: sessionId,
+                  readOnly: readOnly,
+                ),
+              ),
+            );
+            break;
+          }
+        }
+
+        // Default not found route
         print('[main.dart] Route not found: $routeName');
         route = MaterialPageRoute(
           builder: (_) =>

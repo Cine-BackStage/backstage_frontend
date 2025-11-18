@@ -20,5 +20,6 @@ class AppRoutes {
 
   // Detail routes
   static const String sessionDetail = '/sessions/:id';
+  static const String seatSelection = '/sessions/:id/seats';
   static const String productDetail = '/inventory/:id';
 }

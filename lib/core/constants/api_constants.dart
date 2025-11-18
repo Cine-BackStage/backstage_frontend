@@ -11,17 +11,17 @@ class ApiConstants {
 
   // Sessions
   static const String sessions = '/api/sessions';
-  static String sessionDetails(int id) => '/api/sessions/$id';
-  static String sessionSeats(int id) => '/api/sessions/$id/seats';
+  static String sessionDetails(String id) => '/api/sessions/$id';
+  static String sessionSeats(String id) => '/api/sessions/$id/seats';
 
   // Tickets
   static const String tickets = '/api/tickets';
   static const String ticketsBulk = '/api/tickets/bulk';
-  static String ticketDetails(int id) => '/api/tickets/$id';
-  static String ticketCancel(int id) => '/api/tickets/$id/cancel';
-  static String ticketValidate(int id) => '/api/tickets/$id/validate';
-  static String ticketRefund(int id) => '/api/tickets/$id/refund';
-  static String ticketsBySession(int sessionId) => '/api/tickets/session/$sessionId';
+  static String ticketDetails(String id) => '/api/tickets/$id';
+  static String ticketCancel(String id) => '/api/tickets/$id/cancel';
+  static String ticketValidate(String id) => '/api/tickets/$id/validate';
+  static String ticketRefund(String id) => '/api/tickets/$id/refund';
+  static String ticketsBySession(String sessionId) => '/api/tickets/session/$sessionId';
 
   // Sales
   static const String sales = '/api/sales';
@@ -79,13 +79,13 @@ class ApiConstants {
 
   // Rooms
   static const String rooms = '/api/rooms';
-  static String roomDetails(int id) => '/api/rooms/$id';
-  static String roomPrices(int id) => '/api/rooms/$id/prices';
-  static String roomActivate(int id) => '/api/rooms/$id/activate';
-  static String roomDeactivate(int id) => '/api/rooms/$id/deactivate';
+  static String roomDetails(String id) => '/api/rooms/$id';
+  static String roomPrices(String id) => '/api/rooms/$id/prices';
+  static String roomActivate(String id) => '/api/rooms/$id/activate';
+  static String roomDeactivate(String id) => '/api/rooms/$id/deactivate';
   static const String seatMaps = '/api/rooms/seat-maps';
-  static String seatMapDetails(int id) => '/api/rooms/seat-maps/$id';
-  static String seatMapSeats(int seatMapId) => '/api/rooms/seat-maps/$seatMapId/seats';
+  static String seatMapDetails(String id) => '/api/rooms/seat-maps/$id';
+  static String seatMapSeats(String seatMapId) => '/api/rooms/seat-maps/$seatMapId/seats';
 
   // Reports
   static const String salesReportDaily = '/api/sales/reports/daily';

@@ -6,6 +6,9 @@ import '../../core/constants/api_constants.dart';
 import '../../features/authentication/di/auth_injection_container.dart';
 import '../../features/dashboard/di/dashboard_injection_container.dart';
 import '../../features/pos/di/pos_injection_container.dart';
+import '../../features/sessions/di/sessions_injection_container.dart';
+import '../../features/movies/di/movies_injection_container.dart';
+import '../../features/rooms/di/rooms_injection_container.dart';
 
 /// Central Dependency Injection Container
 /// Coordinates all module injection containers and core services
@@ -50,6 +53,15 @@ class InjectionContainer {
 
     // POS Module
     await PosInjectionContainer.init();
+
+    // Sessions Module
+    await SessionsInjectionContainer.init();
+
+    // Movies Module
+    await MoviesInjectionContainer.init();
+
+    // Rooms Module
+    await RoomsInjectionContainer.init();
 
     // TODO: Add other feature modules
     // await InventoryInjectionContainer.init();
