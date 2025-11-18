@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/usecases/usecase.dart';
+import '../../../sessions/domain/services/seat_reservation_manager.dart';
 import '../../domain/entities/sale.dart';
 import '../../domain/entities/sale_item.dart';
 import '../../domain/entities/payment.dart';
@@ -184,33 +185,166 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     final currentState = state;
 
     if (currentState is PosSaleInProgress) {
-      // Find the product to check stock
-      final product = currentState.products.firstWhere(
-        (p) => p.sku == event.productSku,
-        orElse: () => throw Exception('Product not found'),
-      );
+      // Check if this is a ticket item (has sessionId and seatId)
+      final isTicket = event.sessionId != null && event.seatId != null;
 
-      // Calculate total quantity already in cart for this product
-      final quantityInCart = currentState.sale.items
-          .where((item) => item.sku == event.productSku)
-          .fold<int>(0, (sum, item) => sum + item.quantity);
+      // For ticket items, we need a real backend sale ID
+      String saleId = currentState.sale.id;
 
-      // Check if we have enough stock
-      final availableStock = product.qtyOnHand - quantityInCart;
-      if (availableStock < event.quantity) {
-        emit(PosError(
-          message: availableStock > 0
-              ? 'Estoque insuficiente. Disponível: $availableStock unidade(s).'
-              : 'Produto sem estoque disponível.',
-          products: currentState.products,
-          sale: currentState.sale,
-        ));
+      // If sale is local (starts with LOCAL_), create it on backend first
+      if (isTicket && saleId.startsWith('LOCAL_')) {
+        final createResult = await createSaleUseCase(
+          CreateSaleParams(buyerCpf: currentState.sale.buyerCpf),
+        );
+
+        final createdSale = await createResult.fold(
+          (failure) async {
+            emit(PosError(
+              message: 'Não foi possível criar a venda. Tente novamente.',
+              products: currentState.products,
+              sale: currentState.sale,
+            ));
+            emit(PosSaleInProgress(
+              sale: currentState.sale,
+              products: currentState.products,
+              discountCode: currentState.discountCode,
+            ));
+            return null;
+          },
+          (sale) async => sale,
+        );
+
+        if (createdSale == null) return;
+
+        // Update the sale ID to the real backend ID
+        final oldSaleId = currentState.sale.id;
+        saleId = createdSale.id;
+
+        // Migrate local seat reservations to the new sale ID
+        final oldReservations = SeatReservationManager().getSaleReservations(oldSaleId);
+        if (oldReservations != null) {
+          oldReservations.forEach((sessionId, seatIds) {
+            SeatReservationManager().reserveSeats(saleId, sessionId, seatIds.toList());
+          });
+          SeatReservationManager().releaseSaleReservations(oldSaleId);
+        }
+
+        // Update current state with real sale
+        final updatedSale = Sale(
+          id: saleId,
+          companyId: createdSale.companyId,
+          cashierCpf: createdSale.cashierCpf,
+          buyerCpf: currentState.sale.buyerCpf,
+          createdAt: createdSale.createdAt,
+          status: createdSale.status,
+          subtotal: currentState.sale.subtotal,
+          discountAmount: currentState.sale.discountAmount,
+          grandTotal: currentState.sale.grandTotal,
+          items: currentState.sale.items,
+          payments: currentState.sale.payments,
+          discountCode: currentState.sale.discountCode,
+        );
+
         emit(PosSaleInProgress(
-          sale: currentState.sale,
+          sale: updatedSale,
           products: currentState.products,
           discountCode: currentState.discountCode,
         ));
+      }
+
+      // For ticket items, call backend API immediately to reserve the seat
+      if (isTicket) {
+        final result = await addItemToSaleUseCase(
+          AddItemParams(
+            saleId: saleId,
+            sku: event.productSku,
+            sessionId: event.sessionId,
+            seatId: event.seatId,
+            description: event.description,
+            quantity: event.quantity,
+            unitPrice: event.unitPrice,
+          ),
+        );
+
+        await result.fold(
+          (failure) async {
+            emit(PosError(
+              message: failure.userMessage,
+              products: currentState.products,
+              sale: currentState.sale,
+            ));
+            emit(PosSaleInProgress(
+              sale: currentState.sale,
+              products: currentState.products,
+              discountCode: currentState.discountCode,
+            ));
+          },
+          (saleItem) async {
+            // Add item to local sale
+            final updatedItems = [...currentState.sale.items, saleItem];
+
+            // Recalculate totals
+            final subtotal = updatedItems.fold<double>(
+              0.0,
+              (sum, item) => sum + item.totalPrice,
+            );
+            final grandTotal = subtotal - currentState.sale.discountAmount;
+
+            final updatedSale = Sale(
+              id: currentState.sale.id,
+              companyId: currentState.sale.companyId,
+              cashierCpf: currentState.sale.cashierCpf,
+              buyerCpf: currentState.sale.buyerCpf,
+              createdAt: currentState.sale.createdAt,
+              status: currentState.sale.status,
+              subtotal: subtotal,
+              discountAmount: currentState.sale.discountAmount,
+              grandTotal: grandTotal,
+              items: updatedItems,
+              payments: currentState.sale.payments,
+              discountCode: currentState.sale.discountCode,
+            );
+
+            emit(PosSaleInProgress(
+              sale: updatedSale,
+              products: currentState.products,
+              discountCode: currentState.discountCode,
+            ));
+          },
+        );
         return;
+      }
+
+      // Only check stock for inventory products, not tickets
+      if (!isTicket) {
+        // Find the product to check stock
+        final product = currentState.products.firstWhere(
+          (p) => p.sku == event.productSku,
+          orElse: () => throw Exception('Product not found'),
+        );
+
+        // Calculate total quantity already in cart for this product
+        final quantityInCart = currentState.sale.items
+            .where((item) => item.sku == event.productSku)
+            .fold<int>(0, (sum, item) => sum + item.quantity);
+
+        // Check if we have enough stock
+        final availableStock = product.qtyOnHand - quantityInCart;
+        if (availableStock < event.quantity) {
+          emit(PosError(
+            message: availableStock > 0
+                ? 'Estoque insuficiente. Disponível: $availableStock unidade(s).'
+                : 'Produto sem estoque disponível.',
+            products: currentState.products,
+            sale: currentState.sale,
+          ));
+          emit(PosSaleInProgress(
+            sale: currentState.sale,
+            products: currentState.products,
+            discountCode: currentState.discountCode,
+          ));
+          return;
+        }
       }
 
       // Create new item locally
