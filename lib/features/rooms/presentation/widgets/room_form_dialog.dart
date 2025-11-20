@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../design_system/theme/app_colors.dart';
 import '../../../../design_system/theme/app_text_styles.dart';
@@ -20,7 +19,6 @@ class RoomFormDialog extends StatefulWidget {
 class _RoomFormDialogState extends State<RoomFormDialog> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
-  late final TextEditingController _capacityController;
   late RoomType _selectedRoomType;
   bool _isActive = true;
 
@@ -31,9 +29,6 @@ class _RoomFormDialogState extends State<RoomFormDialog> {
     super.initState();
     final room = widget.room;
     _nameController = TextEditingController(text: room?.name ?? '');
-    _capacityController = TextEditingController(
-      text: room?.capacity.toString() ?? '',
-    );
     _selectedRoomType = room?.roomType ?? RoomType.twoD;
     _isActive = room?.isActive ?? true;
   }
@@ -41,14 +36,14 @@ class _RoomFormDialogState extends State<RoomFormDialog> {
   @override
   void dispose() {
     _nameController.dispose();
-    _capacityController.dispose();
     super.dispose();
   }
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
-    final capacity = int.tryParse(_capacityController.text) ?? 0;
+    // Fixed capacity of 120 seats for all rooms
+    const capacity = 120;
 
     if (isEditMode) {
       // Update existing room
@@ -156,31 +151,6 @@ class _RoomFormDialogState extends State<RoomFormDialog> {
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Nome é obrigatório';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Capacity (required)
-                      TextFormField(
-                        controller: _capacityController,
-                        decoration: const InputDecoration(
-                          labelText: 'Capacidade (assentos) *',
-                          hintText: 'Ex: 150',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Capacidade é obrigatória';
-                          }
-                          final capacity = int.tryParse(value);
-                          if (capacity == null || capacity <= 0) {
-                            return 'Capacidade inválida';
                           }
                           return null;
                         },
