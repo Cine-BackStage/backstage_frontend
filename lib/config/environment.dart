@@ -1,3 +1,6 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 /// Environment configuration for different build modes
 ///
 /// This class provides environment-specific configuration values
@@ -9,22 +12,47 @@ class Environment {
     defaultValue: 'development',
   );
 
+  static String? _cachedBaseUrl;
+
   /// API base URL for the current environment
   static String get apiBaseUrl {
+    if (_cachedBaseUrl != null) {
+      return _cachedBaseUrl!;
+    }
+
     switch (_environment) {
       case 'production':
-        return const String.fromEnvironment(
+        _cachedBaseUrl = const String.fromEnvironment(
           'API_URL',
           defaultValue: 'https://backstagebackend-production.up.railway.app',
         );
+        return _cachedBaseUrl!;
       case 'development':
       default:
-        // Use 10.0.2.2 for Android Emulator (maps to host localhost)
-        // For iOS Simulator or web, use localhost
-        return const String.fromEnvironment(
-          'API_URL',
-          defaultValue: 'http://10.0.2.2:3000',
-        );
+        const customUrl = String.fromEnvironment('API_URL');
+        if (customUrl.isNotEmpty) {
+          _cachedBaseUrl = customUrl;
+          return _cachedBaseUrl!;
+        }
+
+        // Auto-detect platform and use appropriate localhost address
+        if (kIsWeb) {
+          _cachedBaseUrl = 'http://localhost:3000';
+        } else {
+          try {
+            if (Platform.isAndroid) {
+              // Android Emulator uses 10.0.2.2 to access host machine
+              _cachedBaseUrl = 'http://10.0.2.2:3000';
+            } else {
+              // iOS Simulator, macOS, Linux, Windows use localhost
+              _cachedBaseUrl = 'http://localhost:3000';
+            }
+          } catch (e) {
+            // Fallback if Platform check fails
+            _cachedBaseUrl = 'http://localhost:3000';
+          }
+        }
+        return _cachedBaseUrl!;
     }
   }
 
