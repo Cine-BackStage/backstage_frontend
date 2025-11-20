@@ -2,34 +2,48 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Flutter: Run",
-      "type": "dart",
+      "name": "Development (Local API)",
       "request": "launch",
+      "type": "dart",
       "program": "lib/main.dart",
-      "cwd": "${workspaceFolder}",
-      "args": []
+      "args": [
+        "--dart-define=ENV=development",
+        "--dart-define=API_URL=http://localhost:3000"
+      ]
     },
     {
-      "name": "Flutter: Run (Profile Mode)",
-      "type": "dart",
+      "name": "Production (Railway API)",
       "request": "launch",
+      "type": "dart",
       "program": "lib/main.dart",
-      "cwd": "${workspaceFolder}",
-      "flutterMode": "profile"
+      "args": [
+        "--dart-define=ENV=production",
+        "--dart-define=API_URL=https://backstagebackend-production.up.railway.app"
+      ]
     },
     {
-      "name": "Flutter: Run (Release Mode)",
-      "type": "dart",
+      "name": "Development (Chrome)",
       "request": "launch",
+      "type": "dart",
       "program": "lib/main.dart",
-      "cwd": "${workspaceFolder}",
-      "flutterMode": "release"
+      "args": [
+        "--dart-define=ENV=development",
+        "--dart-define=API_URL=http://localhost:3000",
+        "-d",
+        "chrome"
+      ]
     },
     {
-      "name": "Flutter: Attach to Device",
+      "name": "Production (Chrome)",
+      "request": "launch",
       "type": "dart",
-      "request": "attach",
-      "cwd": "${workspaceFolder}"
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=ENV=production",
+        "--dart-define=API_URL=https://backstagebackend-production.up.railway.app",
+        "-d",
+        "chrome"
+      ]
     }
   ]
 }

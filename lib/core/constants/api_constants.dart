@@ -1,9 +1,11 @@
+import '../../config/environment.dart';
+
 /// API Constants for Backstage Cinema Backend
 class ApiConstants {
-  // Base URL - Use 10.0.2.2 for Android Emulator (maps to host localhost)
-  // For iOS Simulator, use localhost
-  // For Physical Device, use your computer's IP address (e.g., 192.168.0.221)
-  static const String baseUrl = 'http://10.0.2.2:3000';
+  // Base URL - Automatically switches between development and production
+  // Development: http://10.0.2.2:3000 (Android emulator) or http://localhost:3000
+  // Production: https://backstagebackend-production.up.railway.app
+  static String get baseUrl => Environment.apiBaseUrl;
 
   // Authentication
   static const String login = '/api/employees/login';
