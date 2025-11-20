@@ -1,4 +1,4 @@
-package com.example.backstage_frontend
+package com.backstagecine.app
 
 import io.flutter.embedding.android.FlutterActivity
 
