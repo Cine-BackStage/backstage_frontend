@@ -35,6 +35,9 @@ void main() async {
   // Initialize all dependencies via central injection container
   await InjectionContainer.init();
 
+  // Debug: Print environment configuration
+  debugPrint('🌍 Environment: ${const String.fromEnvironment('ENV', defaultValue: 'development')}');
+
   runApp(const BackstageApp());
 }
 
@@ -88,14 +91,12 @@ class _BackstageAppState extends State<BackstageApp> {
   /// Route generator
   Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
     final routeName = settings.name ?? '/';
-    print('[main.dart] _onGenerateRoute called with route: $routeName');
 
     // Don't cache auth-related routes as they can be removed from the stack
     final shouldCache = routeName == '/demo';
 
     // Check if route is already cached and return it
     if (shouldCache && _routeCache.containsKey(routeName)) {
-      print('[main.dart] Returning cached route for: $routeName');
       return _routeCache[routeName];
     }
 
@@ -211,9 +212,6 @@ class _BackstageAppState extends State<BackstageApp> {
         break;
 
       case '/demo':
-        print(
-          '[main.dart] Creating NEW DesignSystemDemoModule with stable key: $_demoNavigatorKey',
-        );
         route = MaterialPageRoute(
           settings: settings,
           builder: (_) =>
@@ -231,8 +229,6 @@ class _BackstageAppState extends State<BackstageApp> {
           final args = settings.arguments as Map<String, dynamic>?;
           final readOnly = args?['readOnly'] as bool? ?? false;
 
-          print('[main.dart] Seat selection route - sessionId: $sessionId, readOnly: $readOnly, args: $args');
-
           if (sessionId.isNotEmpty) {
             route = MaterialPageRoute(
               settings: settings,
@@ -249,7 +245,6 @@ class _BackstageAppState extends State<BackstageApp> {
         }
 
         // Default not found route
-        print('[main.dart] Route not found: $routeName');
         route = MaterialPageRoute(
           builder: (_) =>
               const Scaffold(body: Center(child: Text('Route not found'))),

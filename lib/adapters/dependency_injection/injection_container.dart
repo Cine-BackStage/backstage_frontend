@@ -33,17 +33,18 @@ class InjectionContainer {
     // Navigation
     serviceLocator.registerSingleton<NavigationManager>(NavigationManager());
 
+    // Debug: Print API base URL
+    final baseUrl = ApiConstants.baseUrl;
+    print('🔗 API Base URL: $baseUrl');
+
     // HTTP Client with auth interceptor
     serviceLocator.registerSingleton<HttpClient>(
       HttpClient(
         storage: storage,
-        baseUrl: ApiConstants.baseUrl,
+        baseUrl: baseUrl,
       ),
     );
 
-    // TODO: Add other core services when needed
-    // serviceLocator.registerSingleton<ConnectivityChecker>(ConnectivityChecker());
-    // serviceLocator.registerSingleton<AnalyticsTracker>(AnalyticsTracker());
   }
 
   /// Initialize feature module dependencies
@@ -74,7 +75,5 @@ class InjectionContainer {
 
     // Reports Module
     await ReportsInjectionContainer.init();
-
-    // TODO: Add other feature modules
   }
 }

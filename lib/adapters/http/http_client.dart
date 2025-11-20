@@ -35,12 +35,16 @@ class HttpClient {
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+          print('🌐 HTTP Request: ${options.method} ${options.baseUrl}${options.path}');
           return handler.next(options);
         },
         onResponse: (response, handler) {
+          print('✅ HTTP Response: ${response.statusCode} ${response.requestOptions.path}');
           return handler.next(response);
         },
         onError: (error, handler) async {
+          print('❌ HTTP Error: ${error.response?.statusCode} ${error.requestOptions.path} - ${error.message}');
+
           // Handle 401 Unauthorized - token expired
           if (error.response?.statusCode == 401) {
             // Clear auth data
@@ -51,7 +55,6 @@ class HttpClient {
             await _storage.remove(StorageKeys.employeeId);
             await _storage.remove(StorageKeys.companyId);
 
-            // TODO: Navigate to login screen
             // This will be handled by the auth bloc listening to token changes
           }
 
