@@ -24,11 +24,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<Either<Failure, Employee>> getEmployeeProfile() async {
     try {
       final employeeModel = await authLocalDataSource.getCachedEmployee();
-      if (employeeModel == null) {
-        return const Left(
-          Failure(message: 'No employee data found. Please login again.'),
-        );
-      }
       // EmployeeModel already extends Employee, so we can return it directly
       return Right(employeeModel);
     } catch (e) {

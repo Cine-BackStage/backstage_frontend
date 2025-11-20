@@ -70,6 +70,8 @@ class ProfilePage extends StatelessWidget {
                         children: [
                           Text('Informações', style: AppTextStyles.h3),
                           const SizedBox(height: 16),
+                          _buildInfoRow('Tipo de Usuário', employee.role),
+                          const Divider(),
                           _buildInfoRow('CPF', employee.cpf),
                           const Divider(),
                           _buildInfoRow('Matrícula', employee.employeeId),
@@ -84,39 +86,18 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-
-                  // Settings Card
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Configurações', style: AppTextStyles.h3),
-                          const SizedBox(height: 16),
-                          _buildInfoRow('Idioma', settings.language == 'pt_BR' ? 'Português (BR)' : settings.language),
-                          const Divider(),
-                          _buildInfoRow('Tema', settings.theme == 'dark' ? 'Escuro' : 'Claro'),
-                          const Divider(),
-                          _buildInfoRow(
-                            'Notificações',
-                            settings.notifications ? 'Ativadas' : 'Desativadas',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 24),
 
                   // Logout Button
-                  OutlinedButton.icon(
+                  ElevatedButton.icon(
                     onPressed: () => _handleLogout(context),
                     icon: const Icon(Icons.logout),
                     label: const Text('Sair'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.error,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.all(16),
+                      elevation: 0,
                     ),
                   ),
                 ],
