@@ -21,6 +21,7 @@ import 'features/sessions/presentation/bloc/sessions_bloc.dart';
 import 'features/inventory/presentation/pages/inventory_page.dart';
 import 'features/reports/presentation/pages/reports_page.dart';
 import 'features/profile/presentation/pages/profile_page.dart';
+import 'features/profile/presentation/bloc/profile_bloc.dart';
 import 'adapters/dependency_injection/injection_container.dart';
 import 'adapters/dependency_injection/service_locator.dart';
 
@@ -165,7 +166,10 @@ class _BackstageAppState extends State<BackstageApp> {
       case AppRoutes.profile:
         route = MaterialPageRoute(
           settings: settings,
-          builder: (_) => const ProfilePage(),
+          builder: (_) => BlocProvider(
+            create: (context) => serviceLocator<ProfileBloc>(),
+            child: const ProfilePage(),
+          ),
         );
         break;
 
