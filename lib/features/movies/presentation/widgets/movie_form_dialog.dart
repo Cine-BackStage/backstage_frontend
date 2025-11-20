@@ -50,7 +50,6 @@ class _MovieFormDialogState extends State<MovieFormDialog> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) {
-      print('❌ Movie form validation failed');
       return;
     }
 
@@ -58,9 +57,6 @@ class _MovieFormDialogState extends State<MovieFormDialog> {
 
     if (isEditMode) {
       // Update existing movie
-      print(
-        '🔄 Submitting movie update: ${widget.movie!.id} - ${_titleController.text}',
-      );
       context.read<MovieManagementBloc>().add(
         UpdateMovieRequested(
           params: UpdateMovieParams(
@@ -75,7 +71,6 @@ class _MovieFormDialogState extends State<MovieFormDialog> {
       );
     } else {
       // Create new movie
-      print('✨ Submitting new movie: ${_titleController.text}');
       context.read<MovieManagementBloc>().add(
         CreateMovieRequested(
           params: CreateMovieParams(

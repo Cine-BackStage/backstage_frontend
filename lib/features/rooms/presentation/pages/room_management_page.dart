@@ -469,7 +469,7 @@ class _RoomManagementViewState extends State<_RoomManagementView> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.alertWarning.withOpacity(0.1),
+                  color: AppColors.alertWarning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: AppColors.alertWarning),
                 ),

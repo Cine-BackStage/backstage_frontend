@@ -155,8 +155,6 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     AdjustStockRequested event,
     Emitter<InventoryState> emit,
   ) async {
-    print('[Inventory BLoC] Adjust stock requested - SKU: ${event.sku}, Quantity: ${event.quantity}, Reason: ${event.reason}');
-
     final result = await adjustStockUseCase(
       AdjustStockParams(
         sku: event.sku,
@@ -168,21 +166,17 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
 
     result.fold(
       (failure) {
-        print('[Inventory BLoC Error] Stock adjustment failed: ${failure.message}');
         emit(InventoryError(failure.message));
       },
       (_) {
-        print('[Inventory BLoC] Stock adjustment successful, reloading inventory');
-
         // Reload inventory after adjustment
         add(const LoadInventoryRequested());
 
         // Refresh dashboard to update alerts and low stock count
         try {
           serviceLocator<DashboardBloc>().add(const RefreshDashboard());
-          print('[Inventory BLoC] Dashboard refresh triggered');
         } catch (e) {
-          print('[Inventory BLoC] Could not refresh dashboard: $e');
+          // Dashboard refresh failed
         }
       },
     );

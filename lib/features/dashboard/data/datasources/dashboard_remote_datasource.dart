@@ -1,6 +1,7 @@
 import '../../../../adapters/http/http_client.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/errors/exceptions.dart';
+import '../../../../core/services/logger_service.dart';
 import '../models/dashboard_stats_model.dart';
 import '../models/sales_summary_model.dart';
 import '../models/session_summary_model.dart';
@@ -14,13 +15,14 @@ abstract class DashboardRemoteDataSource {
 /// Dashboard remote data source implementation
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   final HttpClient client;
+  final logger = LoggerService();
 
   DashboardRemoteDataSourceImpl(this.client);
 
   @override
   Future<DashboardStatsModel> getDashboardStats() async {
     try {
-      print('[Dashboard Remote] Fetching dashboard stats...');
+      logger.logDataSourceRequest('DashboardDataSource', 'getDashboardStats', null);
 
       // Fetch data from multiple endpoints in parallel
       final results = await Future.wait([
@@ -43,10 +45,9 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         lastUpdated: DateTime.now(),
       );
 
-      print('[Dashboard Remote] Dashboard stats fetched successfully');
       return dashboardStats;
-    } catch (e) {
-      print('[Dashboard Remote Error] ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('DashboardDataSource', 'getDashboardStats', e, stackTrace);
       if (e is AppException) {
         rethrow;
       }
@@ -69,8 +70,8 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
           message: response.data['message'] ?? 'Failed to get sales summary',
         );
       }
-    } catch (e) {
-      print('[Dashboard Remote] Sales summary error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('DashboardDataSource', '_getSalesSummary', e, stackTrace);
       // Return empty data on error
       return const SalesSummaryModel(
         todayRevenue: 0.0,
@@ -128,8 +129,8 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
           message: response.data['message'] ?? 'Failed to get sessions',
         );
       }
-    } catch (e) {
-      print('[Dashboard Remote] Session summary error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('DashboardDataSource', '_getSessionSummary', e, stackTrace);
       // Return empty data on error
       return const SessionSummaryModel(
         activeSessionsToday: 0,
@@ -194,8 +195,8 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         totalItems: totalItems,
         outOfStockItems: outOfStock,
       );
-    } catch (e) {
-      print('[Dashboard Remote] Inventory summary error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('DashboardDataSource', '_getInventorySummary', e, stackTrace);
       // Return empty data on error
       return const InventorySummaryModel(
         lowStockItems: 0,
@@ -220,8 +221,8 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
           message: response.data['message'] ?? 'Failed to get customers',
         );
       }
-    } catch (e) {
-      print('[Dashboard Remote] Active customers error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('DashboardDataSource', '_getActiveCustomers', e, stackTrace);
       return 0;
     }
   }

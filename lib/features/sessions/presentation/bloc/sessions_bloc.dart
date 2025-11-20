@@ -80,8 +80,6 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
     await result.fold(
       (failure) async => emit(SessionsError(failure: failure)),
       (session) async {
-        print('[SessionsBloc] Session loaded - basePrice: ${session.basePrice}');
-
         // After loading session, automatically load seats
         final seatsResult = await getAvailableSeatsUseCase(
           GetAvailableSeatsParams(sessionId: event.sessionId),
@@ -90,8 +88,6 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
         seatsResult.fold(
           (failure) => emit(SessionsError(failure: failure)),
           (seats) {
-            print('[SessionsBloc] Loaded ${seats.length} seats');
-
             // Get locally reserved seats (in current POS session)
             final reservedSeatIds = SeatReservationManager().getReservedSeats(event.sessionId);
 
@@ -128,13 +124,6 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
               }
               return seat;
             }).toList();
-
-            if (seatsWithPrice.isNotEmpty) {
-              print('[SessionsBloc] First seat price after applying basePrice: ${seatsWithPrice.first.price}');
-              if (reservedSeatIds.isNotEmpty) {
-                print('[SessionsBloc] Locally reserved seats: ${reservedSeatIds.length}');
-              }
-            }
 
             emit(SeatSelectionLoaded(
               session: session,
@@ -179,7 +168,6 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
     if (currentState is! SeatSelectionLoaded) return;
 
     final seat = currentState.seats.firstWhere((s) => s.id == event.seatId);
-    print('[SessionsBloc] Selecting seat - id: ${seat.id}, price: ${seat.price}');
 
     final selectionResult = selectSeatUseCase(
       SelectSeatParams(
@@ -191,11 +179,6 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
     selectionResult.fold(
       (failure) => emit(SessionsError(failure: failure)),
       (selectedSeats) {
-        print('[SessionsBloc] Selected seats count: ${selectedSeats.length}');
-        for (final s in selectedSeats) {
-          print('[SessionsBloc] Seat ${s.seatNumber}: price = ${s.price}');
-        }
-
         final priceResult = calculateTicketPriceUseCase(
           CalculateTicketPriceParams(selectedSeats: selectedSeats),
         );
@@ -203,7 +186,6 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
         priceResult.fold(
           (failure) => emit(SessionsError(failure: failure)),
           (totalPrice) {
-            print('[SessionsBloc] Total price calculated: $totalPrice');
             emit(currentState.copyWith(
               selectedSeats: selectedSeats,
               totalPrice: totalPrice,

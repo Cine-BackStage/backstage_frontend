@@ -69,12 +69,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     result.fold(
       (failure) {
-        // Log detailed error to console
-        print('[AuthBloc] Login failed: ${failure.message}');
         emit(AuthError(failure.message));
       },
       (employee) {
-        print('[AuthBloc] Login successful: ${employee.fullName}');
         emit(Authenticated(employee));
       },
     );
@@ -85,18 +82,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     LogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
-    print('[AuthBloc] Logout requested');
     emit(const AuthLoading());
 
     final result = await logoutUseCase.call(const NoParams());
 
     result.fold(
       (failure) {
-        print('[AuthBloc] Logout failed: ${failure.message}');
         emit(AuthError(failure.message));
       },
       (_) {
-        print('[AuthBloc] Logout successful');
         emit(const Unauthenticated());
       },
     );

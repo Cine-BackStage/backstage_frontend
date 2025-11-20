@@ -1,6 +1,6 @@
-import 'package:dio/dio.dart';
 import '../../../../adapters/http/http_client.dart';
 import '../../../../core/constants/api_constants.dart';
+import '../../../../core/services/logger_service.dart';
 import '../models/session_model.dart';
 import '../models/seat_model.dart';
 import '../models/ticket_model.dart';
@@ -43,6 +43,7 @@ abstract class SessionsRemoteDataSource {
 
 class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
   final HttpClient client;
+  final logger = LoggerService();
 
   SessionsRemoteDataSourceImpl(this.client);
 
@@ -52,7 +53,6 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
     int? movieId,
     int? roomId,
   }) async {
-    print('📡 Datasource: Getting sessions - date: $date, movieId: $movieId, roomId: $roomId');
     final queryParams = <String, dynamic>{};
 
     // API expects startDate and endDate, not just date
@@ -64,7 +64,6 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
 
       queryParams['startDate'] = startOfDay.toIso8601String();
       queryParams['endDate'] = endOfDay.toIso8601String();
-      print('📡 Datasource: Date filter - startDate: ${queryParams['startDate']}, endDate: ${queryParams['endDate']}');
     }
 
     if (movieId != null) {
@@ -74,14 +73,13 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
       queryParams['roomId'] = roomId.toString();
     }
 
-    print('📡 Datasource: Query params: $queryParams');
+    logger.logDataSourceRequest('SessionsDataSource', 'getSessions', queryParams);
     final response = await client.get(
       ApiConstants.sessions,
       queryParameters: queryParams,
     );
 
     final data = response.data['data'] as List;
-    print('✅ Datasource: Fetched ${data.length} sessions');
     return data.map((json) => SessionModel.fromJson(json)).toList();
   }
 
@@ -128,14 +126,17 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
     required String customerCpf,
     String? customerName,
   }) async {
+    final requestData = {
+      'sessionId': sessionId,
+      'seatIds': seatIds,
+      'customerCpf': customerCpf,
+      if (customerName != null) 'customerName': customerName,
+    };
+
+    logger.logDataSourceRequest('SessionsDataSource', 'purchaseTickets', requestData);
     final response = await client.post(
       ApiConstants.ticketsBulk,
-      data: {
-        'sessionId': sessionId,
-        'seatIds': seatIds,
-        'customerCpf': customerCpf,
-        if (customerName != null) 'customerName': customerName,
-      },
+      data: requestData,
     );
 
     final data = response.data['data'] as List;
@@ -177,14 +178,17 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
     required DateTime startTime,
     double? basePrice,
   }) async {
+    final requestData = {
+      'movieId': movieId,
+      'roomId': roomId,
+      'startTime': startTime.toIso8601String(),
+      if (basePrice != null) 'basePrice': basePrice,
+    };
+
+    logger.logDataSourceRequest('SessionsDataSource', 'createSession', requestData);
     final response = await client.post(
       ApiConstants.sessions,
-      data: {
-        'movieId': movieId,
-        'roomId': roomId,
-        'startTime': startTime.toIso8601String(),
-        if (basePrice != null) 'basePrice': basePrice,
-      },
+      data: requestData,
     );
 
     return SessionModel.fromJson(response.data['data']);
@@ -199,15 +203,18 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
     double? basePrice,
     String? status,
   }) async {
+    final requestData = {
+      if (movieId != null) 'movieId': movieId,
+      if (roomId != null) 'roomId': roomId,
+      if (startTime != null) 'startTime': startTime.toIso8601String(),
+      if (basePrice != null) 'basePrice': basePrice,
+      if (status != null) 'status': status,
+    };
+
+    logger.logDataSourceRequest('SessionsDataSource', 'updateSession', requestData);
     final response = await client.put(
       ApiConstants.sessionDetails(sessionId),
-      data: {
-        if (movieId != null) 'movieId': movieId,
-        if (roomId != null) 'roomId': roomId,
-        if (startTime != null) 'startTime': startTime.toIso8601String(),
-        if (basePrice != null) 'basePrice': basePrice,
-        if (status != null) 'status': status,
-      },
+      data: requestData,
     );
 
     return SessionModel.fromJson(response.data['data']);

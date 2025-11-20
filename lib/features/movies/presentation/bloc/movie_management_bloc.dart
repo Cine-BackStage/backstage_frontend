@@ -69,18 +69,15 @@ class MovieManagementBloc extends Bloc<MovieManagementEvent, MovieManagementStat
     UpdateMovieRequested event,
     Emitter<MovieManagementState> emit,
   ) async {
-    print('🔄 Movie bloc: Updating movie ${event.params.movieId}');
     emit(const MovieManagementSaving());
 
     final result = await updateMovieUseCase(event.params);
 
     result.fold(
       (failure) {
-        print('❌ Movie bloc: Update failed - ${failure.userMessage}');
         emit(MovieManagementError(failure: failure));
       },
       (movie) {
-        print('✅ Movie bloc: Update successful');
         emit(MovieManagementSaved(movie: movie));
       },
     );
@@ -90,18 +87,15 @@ class MovieManagementBloc extends Bloc<MovieManagementEvent, MovieManagementStat
     DeleteMovieRequested event,
     Emitter<MovieManagementState> emit,
   ) async {
-    print('🗑️ Movie bloc: Deleting movie ${event.movieId}');
     emit(const MovieManagementDeleting());
 
     final result = await deleteMovieUseCase(event.movieId);
 
     result.fold(
       (failure) {
-        print('❌ Movie bloc: Delete failed - ${failure.userMessage}');
         emit(MovieManagementError(failure: failure));
       },
       (_) {
-        print('✅ Movie bloc: Delete successful');
         emit(MovieManagementDeleted(movieId: event.movieId));
       },
     );

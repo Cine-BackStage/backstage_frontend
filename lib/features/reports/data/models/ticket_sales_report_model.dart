@@ -11,15 +11,9 @@ class TicketSalesReportModel extends TicketSalesReport {
   });
 
   factory TicketSalesReportModel.fromJson(Map<String, dynamic> json) {
-    print('[TicketSalesReportModel] Parsing JSON: $json');
-
     final period = json['period'] as Map<String, dynamic>? ?? {};
     final summaryJson = json['summary'] as Map<String, dynamic>? ?? {};
     final groupedDataJson = json['groupedData'] as List? ?? [];
-
-    print('[TicketSalesReportModel] Period: $period');
-    print('[TicketSalesReportModel] Summary: $summaryJson');
-    print('[TicketSalesReportModel] GroupedData: $groupedDataJson');
 
     return TicketSalesReportModel(
       startDate: DateTime.parse(period['startDate'] as String),
@@ -43,8 +37,6 @@ class TicketReportSummaryModel extends TicketReportSummary {
   });
 
   factory TicketReportSummaryModel.fromJson(Map<String, dynamic> json) {
-    print('[TicketReportSummaryModel] Parsing summary: $json');
-
     final totalTickets = (json['totalTickets'] ?? 0) as int;
     final totalRevenue = (json['totalRevenue'] ?? 0).toDouble();
 
@@ -58,9 +50,6 @@ class TicketReportSummaryModel extends TicketReportSummary {
     final cancelledTickets = ticketsByStatus != null
         ? ((ticketsByStatus['refunded'] ?? 0) as int)
         : (json['cancelledTickets'] ?? 0) as int;
-
-    print('[TicketReportSummaryModel] Calculated averageTicketPrice: $averageTicketPrice');
-    print('[TicketReportSummaryModel] Cancelled tickets: $cancelledTickets');
 
     return TicketReportSummaryModel(
       totalTickets: totalTickets,

@@ -55,7 +55,6 @@ class SplashView extends StatelessWidget {
             },
             error: (message) {
               // On error, go to login
-              print('[Splash Error] $message');
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (context.mounted) {
                   Navigator.of(context).pushReplacementNamed(AppRoutes.login);

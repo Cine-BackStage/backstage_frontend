@@ -24,7 +24,6 @@ class _CreateProductPageState extends State<CreateProductPage> {
   final _quantityController = TextEditingController();
   final _reorderLevelController = TextEditingController(text: '10');
   final _barcodeController = TextEditingController();
-  DateTime? _selectedExpiryDate;
 
   @override
   void dispose() {

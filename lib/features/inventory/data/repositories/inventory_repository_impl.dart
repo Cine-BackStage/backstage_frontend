@@ -60,17 +60,14 @@ class InventoryRepositoryImpl implements InventoryRepository {
     String? notes,
   }) async {
     try {
-      print('[Inventory Repository] Adjusting stock - SKU: $sku, Quantity: $quantity, Reason: $reason, Notes: $notes');
       await remoteDataSource.adjustStock(
         sku: sku,
         quantity: quantity,
         reason: reason,
         notes: notes,
       );
-      print('[Inventory Repository] Stock adjustment successful');
       return const Right(null);
     } catch (e) {
-      print('[Inventory Repository Error] Stock adjustment failed: ${e.toString()}');
       return Left(ErrorMapper.fromException(e));
     }
   }

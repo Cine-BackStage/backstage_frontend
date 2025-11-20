@@ -28,9 +28,6 @@ class SaleModel extends Sale {
       return value.toString();
     }
 
-    print('[SaleModel] Parsing sale with ${(json['items'] as List?)?.length ?? 0} items');
-    print('[SaleModel] Sale totals - subtotal: ${json['subtotal']}, discount: ${json['discountAmount']}, grandTotal: ${json['grandTotal']}');
-
     // Parse items first
     final items = (json['items'] as List?)
             ?.map((item) => SaleItemModel.fromJson(item as Map<String, dynamic>))
@@ -49,9 +46,6 @@ class SaleModel extends Sale {
 
     final discountAmount = _parseDecimal(json['discountAmount']);
     final grandTotal = _parseDecimal(json['grandTotal']);
-
-    print('[SaleModel] Calculated subtotal: $calculatedSubtotal');
-    print('[SaleModel] Final subtotal: $subtotal, discount: $discountAmount, grandTotal: $grandTotal');
 
     return SaleModel(
       id: safeString('id'),

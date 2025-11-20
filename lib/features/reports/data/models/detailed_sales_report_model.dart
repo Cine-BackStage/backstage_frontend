@@ -11,15 +11,9 @@ class DetailedSalesReportModel extends DetailedSalesReport {
   });
 
   factory DetailedSalesReportModel.fromJson(Map<String, dynamic> json) {
-    print('[DetailedSalesReportModel] Parsing JSON: $json');
-
     final period = json['period'] as Map<String, dynamic>? ?? {};
     final summaryJson = json['summary'] as Map<String, dynamic>? ?? {};
     final groupedDataJson = json['groupedData'] as List? ?? [];
-
-    print('[DetailedSalesReportModel] Period: $period');
-    print('[DetailedSalesReportModel] Summary: $summaryJson');
-    print('[DetailedSalesReportModel] GroupedData: $groupedDataJson');
 
     return DetailedSalesReportModel(
       startDate: DateTime.parse(period['startDate'] as String),

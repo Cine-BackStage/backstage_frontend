@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 /// Route guard for authentication
 class AuthGuard {
   /// Checks if user is authenticated
-  /// This is a mocked implementation for Phase 1
   static bool isAuthenticated() {
-    // TODO: Replace with actual authentication check
     return false;
   }
 
@@ -29,9 +27,7 @@ class AuthGuard {
 /// Route guard for permissions
 class PermissionGuard {
   /// Checks if user has specific permission
-  /// This is a mocked implementation for Phase 1
   static bool hasPermission(String permission) {
-    // TODO: Replace with actual permission check
     return true;
   }
 

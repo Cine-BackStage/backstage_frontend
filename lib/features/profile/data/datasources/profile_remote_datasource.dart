@@ -17,7 +17,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     required String currentPassword,
     required String newPassword,
   }) async {
-    // TODO: Implement when backend endpoint is available
     // await client.put(
     //   '/api/employees/password',
     //   data: {

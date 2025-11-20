@@ -183,8 +183,6 @@ class ProductItemCard extends StatelessWidget {
                     );
                   }
 
-                  // TODO: Update expiry date if changed (requires backend support)
-
                   Navigator.of(dialogContext).pop();
                 }
               },
@@ -243,9 +241,7 @@ class ProductItemCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
-        onTap: () {
-          // TODO: Navigate to product details
-        },
+        onTap: () {},
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../../design_system/theme/app_colors.dart';
@@ -98,7 +97,6 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
 
     if (isEditMode) {
       // Update existing session
-      print('🔄 Updating session: ${widget.session!.id}');
       context.read<SessionManagementBloc>().add(
             UpdateSessionRequested(
               sessionId: widget.session!.id,
@@ -110,7 +108,6 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
           );
     } else {
       // Create new session (backend will calculate base price from room type)
-      print('✨ Creating new session - Movie: $_selectedMovieId, Room: $_selectedRoomId, Time: $startTime');
       context.read<SessionManagementBloc>().add(
             CreateSessionRequested(
               movieId: _selectedMovieId!,
@@ -329,7 +326,6 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                                 setState(() {
                                   _selectedRoomId = value;
                                 });
-                                print('🏢 Room selected: $value');
                               },
                               validator: (value) {
                                 if (value == null) {

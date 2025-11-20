@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../../../../adapters/http/http_client.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/errors/exceptions.dart';
+import '../../../../core/services/logger_service.dart';
 import '../../../pos/data/models/product_model.dart';
 import '../models/stock_adjustment_model.dart';
 
@@ -42,6 +43,7 @@ abstract class InventoryRemoteDataSource {
 /// Inventory remote data source implementation
 class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
   final HttpClient client;
+  final logger = LoggerService();
 
   InventoryRemoteDataSourceImpl(this.client);
 
@@ -81,7 +83,6 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
         final products = (response.data['data'] as List)
             .map((json) => ProductModel.fromJson(json as Map<String, dynamic>))
             .toList();
-        print('[Inventory Remote] Fetched ${products.length} active products');
         return products;
       } else {
         throw AppException(
@@ -89,8 +90,8 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
           statusCode: response.statusCode,
         );
       }
-    } catch (e) {
-      print('[Inventory Remote Error] Get inventory failed: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('InventoryDataSource', 'getInventory', e, stackTrace);
       if (e is AppException) {
         rethrow;
       }
@@ -111,8 +112,8 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
           statusCode: response.statusCode,
         );
       }
-    } catch (e) {
-      print('[Inventory Remote Error] Get product details failed: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('InventoryDataSource', 'getProductDetails', e, stackTrace);
       if (e is AppException) {
         rethrow;
       }
@@ -142,8 +143,8 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
           statusCode: response.statusCode,
         );
       }
-    } catch (e) {
-      print('[Inventory Remote Error] Search products failed: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('InventoryDataSource', 'searchProducts', e, stackTrace);
       if (e is AppException) {
         rethrow;
       }
@@ -170,8 +171,8 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
           statusCode: response.statusCode,
         );
       }
-    } catch (e) {
-      print('[Inventory Remote Error] Get low stock failed: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('InventoryDataSource', 'getLowStockProducts', e, stackTrace);
       if (e is AppException) {
         rethrow;
       }
@@ -194,30 +195,19 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
         if (notes != null) 'notes': notes,
       };
 
-      print('[Inventory Remote] Adjusting stock');
-      print('[Inventory Remote] Endpoint: $endpoint');
-      print('[Inventory Remote] Request data: $requestData');
+      logger.logDataSourceRequest('InventoryDataSource', 'adjustStock', requestData);
 
       final response = await client.post(endpoint, data: requestData);
 
-      print('[Inventory Remote] Response status: ${response.statusCode}');
-      print('[Inventory Remote] Response data: ${response.data}');
-
       if (response.data['success'] != true) {
         final errorMessage = response.data['message'] ?? 'Failed to adjust stock';
-        print('[Inventory Remote Error] API returned error: $errorMessage');
         throw AppException(
           message: errorMessage,
           statusCode: response.statusCode,
         );
       }
-
-      print('[Inventory Remote] Stock adjustment successful');
-    } on DioException catch (e) {
-      print('[Inventory Remote Error] DioException caught');
-      print('[Inventory Remote Error] Status code: ${e.response?.statusCode}');
-      print('[Inventory Remote Error] Response data: ${e.response?.data}');
-      print('[Inventory Remote Error] Error message: ${e.message}');
+    } on DioException catch (e, stackTrace) {
+      logger.logDataSourceError('InventoryDataSource', 'adjustStock', e, stackTrace);
 
       final errorMessage = e.response?.data?['message'] ??
                           e.response?.data?['error'] ??
@@ -227,8 +217,8 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
         message: errorMessage,
         statusCode: e.response?.statusCode,
       );
-    } catch (e) {
-      print('[Inventory Remote Error] Adjust stock failed: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('InventoryDataSource', 'adjustStock', e, stackTrace);
       if (e is AppException) {
         rethrow;
       }
@@ -263,8 +253,8 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
           statusCode: response.statusCode,
         );
       }
-    } catch (e) {
-      print('[Inventory Remote Error] Get adjustment history failed: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('InventoryDataSource', 'getAdjustmentHistory', e, stackTrace);
       if (e is AppException) {
         rethrow;
       }
@@ -293,20 +283,24 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
         itemType = 'collectable';
       }
 
+      final requestData = {
+        'sku': sku,
+        'name': name,
+        'unitPrice': unitPrice,
+        'qtyOnHand': initialStock,
+        'reorderLevel': 10, // Default reorder level
+        'itemType': itemType,
+        // Add category based on item type
+        if (itemType == 'food') 'foodCategory': category,
+        if (itemType == 'collectable') 'collectableCategory': category,
+        if (barcode != null && barcode.isNotEmpty) 'barcode': barcode,
+      };
+
+      logger.logDataSourceRequest('InventoryDataSource', 'createProduct', requestData);
+
       final response = await client.post(
         ApiConstants.inventory,
-        data: {
-          'sku': sku,
-          'name': name,
-          'unitPrice': unitPrice,
-          'qtyOnHand': initialStock,
-          'reorderLevel': 10, // Default reorder level
-          'itemType': itemType,
-          // Add category based on item type
-          if (itemType == 'food') 'foodCategory': category,
-          if (itemType == 'collectable') 'collectableCategory': category,
-          if (barcode != null && barcode.isNotEmpty) 'barcode': barcode,
-        },
+        data: requestData,
       );
 
       if (response.data['success'] == true) {
@@ -317,8 +311,8 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
           statusCode: response.statusCode,
         );
       }
-    } catch (e) {
-      print('[Inventory Remote Error] Create product failed: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('InventoryDataSource', 'createProduct', e, stackTrace);
       if (e is AppException) {
         rethrow;
       }
@@ -341,6 +335,8 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
       if (category != null) data['category'] = category;
       if (barcode != null) data['barcode'] = barcode;
 
+      logger.logDataSourceRequest('InventoryDataSource', 'updateProduct', data);
+
       final response = await client.put(
         ApiConstants.inventoryDetails(sku),
         data: data,
@@ -354,8 +350,8 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
           statusCode: response.statusCode,
         );
       }
-    } catch (e) {
-      print('[Inventory Remote Error] Update product failed: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('InventoryDataSource', 'updateProduct', e, stackTrace);
       if (e is AppException) {
         rethrow;
       }
@@ -370,12 +366,12 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
           ? ApiConstants.inventoryActivate(sku)
           : ApiConstants.inventoryDeactivate(sku);
 
-      print('[Inventory Remote] Toggle status - SKU: $sku, isActive: $isActive');
-      print('[Inventory Remote] Endpoint: $endpoint');
+      logger.logDataSourceRequest('InventoryDataSource', 'toggleProductStatus', {
+        'sku': sku,
+        'isActive': isActive,
+      });
 
       final response = await client.patch(endpoint);
-
-      print('[Inventory Remote] Response: ${response.data}');
 
       if (response.data['success'] != true) {
         throw AppException(
@@ -383,10 +379,8 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
           statusCode: response.statusCode,
         );
       }
-    } on DioException catch (e) {
-      print('[Inventory Remote Error] DioException caught');
-      print('[Inventory Remote Error] Status code: ${e.response?.statusCode}');
-      print('[Inventory Remote Error] Response data: ${e.response?.data}');
+    } on DioException catch (e, stackTrace) {
+      logger.logDataSourceError('InventoryDataSource', 'toggleProductStatus', e, stackTrace);
 
       final errorMessage = e.response?.data?['message'] ??
                           e.response?.data?['error'] ??
@@ -396,8 +390,8 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
         message: errorMessage,
         statusCode: e.response?.statusCode,
       );
-    } catch (e) {
-      print('[Inventory Remote Error] Toggle product status failed: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('InventoryDataSource', 'toggleProductStatus', e, stackTrace);
       if (e is AppException) {
         rethrow;
       }

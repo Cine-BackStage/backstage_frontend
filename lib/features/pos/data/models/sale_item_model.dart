@@ -33,11 +33,6 @@ class SaleItemModel extends SaleItem {
       return defaultValue;
     }
 
-    // Debug logging for price fields
-    print('[SaleItemModel] Parsing item: ${json['description']}');
-    print('[SaleItemModel] unitPrice raw: ${json['unitPrice']} (${json['unitPrice'].runtimeType})');
-    print('[SaleItemModel] totalPrice raw: ${json['totalPrice']} (${json['totalPrice'].runtimeType})');
-
     final unitPrice = _parseDecimal(json['unitPrice']);
     final quantity = safeInt('quantity', 1);
 
@@ -45,10 +40,6 @@ class SaleItemModel extends SaleItem {
     final totalPrice = json['totalPrice'] != null
         ? _parseDecimal(json['totalPrice'])
         : unitPrice * quantity;
-
-    print('[SaleItemModel] unitPrice parsed: $unitPrice');
-    print('[SaleItemModel] quantity: $quantity');
-    print('[SaleItemModel] totalPrice parsed: $totalPrice');
 
     return SaleItemModel(
       id: safeString('id'),

@@ -28,8 +28,6 @@ class SeatReservationManager {
       _saleReservations[saleId]![sessionId] = {};
     }
     _saleReservations[saleId]![sessionId]!.addAll(seatIds);
-
-    print('[SeatReservationManager] Reserved seats $seatIds for sale $saleId in session $sessionId');
   }
 
   /// Release seats for a specific sale
@@ -49,7 +47,6 @@ class SeatReservationManager {
 
       // Remove sale reservations
       _saleReservations.remove(saleId);
-      print('[SeatReservationManager] Released all reservations for sale $saleId');
     }
   }
 
@@ -72,8 +69,6 @@ class SeatReservationManager {
         _saleReservations.remove(saleId);
       }
     }
-
-    print('[SeatReservationManager] Released seats $seatIds for sale $saleId in session $sessionId');
   }
 
   /// Check if a seat is reserved
@@ -95,6 +90,5 @@ class SeatReservationManager {
   void clearAll() {
     _reservations.clear();
     _saleReservations.clear();
-    print('[SeatReservationManager] Cleared all reservations');
   }
 }

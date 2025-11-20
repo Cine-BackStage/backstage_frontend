@@ -283,12 +283,6 @@ class MoviesTab extends StatelessWidget {
   }
 
   void _showMovieDialog(BuildContext context, {Movie? movie}) {
-    if (movie != null) {
-      print('✏️ Editing movie: ${movie.id} - ${movie.title}');
-    } else {
-      print('➕ Creating new movie');
-    }
-
     showDialog(
       context: context,
       builder: (dialogContext) => BlocProvider.value(
@@ -299,8 +293,6 @@ class MoviesTab extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context, Movie movie) {
-    print('🗑️ Delete movie clicked: ${movie.id} - ${movie.title}');
-
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -351,7 +343,6 @@ class MoviesTab extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              print('✅ Confirming delete movie: ${movie.id}');
               Navigator.of(dialogContext).pop();
               context
                   .read<MovieManagementBloc>()

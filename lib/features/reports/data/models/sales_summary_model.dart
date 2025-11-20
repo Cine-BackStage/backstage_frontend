@@ -46,11 +46,6 @@ class SalesSummaryModel extends SalesSummary {
       final lastMonthTransactions = (json['lastMonthTransactions'] ?? 0) as int;
       final growthPercentage = (json['growthPercentage'] ?? 0).toDouble();
 
-      print('[SalesSummaryModel] Parsed values:');
-      print('  todayRevenue: $todayRevenue, todayTransactions: $todayTransactions');
-      print('  weekRevenue: $weekRevenue, weekTransactions: $weekTransactions');
-      print('  monthRevenue: $monthRevenue, monthTransactions: $monthTransactions');
-
       return SalesSummaryModel(
         todayRevenue: todayRevenue,
         todayTransactions: todayTransactions,

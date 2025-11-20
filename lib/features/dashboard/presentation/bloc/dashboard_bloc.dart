@@ -24,18 +24,15 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     LoadDashboardStats event,
     Emitter<DashboardState> emit,
   ) async {
-    print('[DashboardBloc] Loading dashboard stats');
     emit(const DashboardLoading());
 
     final result = await getDashboardStatsUseCase.call(const NoParams());
 
     result.fold(
       (failure) {
-        print('[DashboardBloc] Load failed: ${failure.message}');
         emit(DashboardError(failure.message));
       },
       (stats) {
-        print('[DashboardBloc] Load successful');
         emit(DashboardLoaded(stats));
       },
     );
@@ -51,12 +48,10 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     if (_lastRefreshTime != null) {
       final timeSinceLastRefresh = now.difference(_lastRefreshTime!);
       if (timeSinceLastRefresh.inSeconds < 2) {
-        print('[DashboardBloc] Refresh throttled (last refresh: ${timeSinceLastRefresh.inMilliseconds}ms ago)');
         return;
       }
     }
 
-    print('[DashboardBloc] Refreshing dashboard');
     _lastRefreshTime = now;
 
     // If we have data, show refreshing state
@@ -70,7 +65,6 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
     result.fold(
       (failure) {
-        print('[DashboardBloc] Refresh failed: ${failure.message}');
         // Keep previous data if available
         if (state is DashboardRefreshing) {
           emit(DashboardLoaded((state as DashboardRefreshing).stats));
@@ -79,7 +73,6 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         }
       },
       (stats) {
-        print('[DashboardBloc] Refresh successful');
         emit(DashboardLoaded(stats));
       },
     );

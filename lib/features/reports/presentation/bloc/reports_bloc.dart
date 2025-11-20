@@ -31,19 +31,15 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
     LoadSalesSummary event,
     Emitter<ReportsState> emit,
   ) async {
-    print('[Reports BLoC] Loading sales summary...');
     emit(const ReportsLoading());
 
     final result = await getSalesSummaryUseCase(NoParams());
 
     result.fold(
       (failure) {
-        print('[Reports BLoC] Sales summary failed: ${failure.message}');
         emit(ReportsError(failure.message));
       },
       (summary) {
-        print('[Reports BLoC] Sales summary loaded successfully');
-        print('[Reports BLoC] Today revenue: ${summary.todayRevenue}, transactions: ${summary.todayTransactions}');
         emit(SalesSummaryLoaded(summary));
       },
     );

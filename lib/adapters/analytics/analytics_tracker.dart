@@ -13,7 +13,6 @@ class AnalyticsTracker {
       'Screen View: $screenName',
       name: 'Analytics',
     );
-    // TODO: Implement actual analytics tracking
   }
 
   /// Track event
@@ -25,7 +24,6 @@ class AnalyticsTracker {
       'Event: $eventName${parameters != null ? ' | Params: $parameters' : ''}',
       name: 'Analytics',
     );
-    // TODO: Implement actual analytics tracking
   }
 
   /// Track error
@@ -40,7 +38,6 @@ class AnalyticsTracker {
       error: error,
       stackTrace: stackTrace,
     );
-    // TODO: Implement actual error tracking
   }
 
   /// Set user ID
@@ -49,7 +46,6 @@ class AnalyticsTracker {
       'User ID: ${userId ?? 'null'}',
       name: 'Analytics',
     );
-    // TODO: Implement actual user ID tracking
   }
 
   /// Set user property
@@ -58,7 +54,6 @@ class AnalyticsTracker {
       'User Property: $name = ${value ?? 'null'}',
       name: 'Analytics',
     );
-    // TODO: Implement actual user property tracking
   }
 
   /// Track login

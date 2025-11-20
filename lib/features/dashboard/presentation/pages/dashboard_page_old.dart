@@ -20,14 +20,11 @@ class DashboardPage extends StatelessWidget {
         return previous != current;
       },
       listener: (context, state) {
-        print('[Dashboard] State changed: $state');
         if (state is Unauthenticated) {
-          print('[Dashboard] Navigating to login...');
           // Navigate immediately without waiting for frame
           // The route will be created fresh, not from cache
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted) {
-              print('[Dashboard] Executing navigation to login');
               Navigator.of(context).pushNamedAndRemoveUntil(
                 AppRoutes.login,
                 (route) => false,
@@ -35,7 +32,6 @@ class DashboardPage extends StatelessWidget {
             }
           });
         } else if (state is AuthError) {
-          print('[Dashboard] Error: ${state.message}');
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted) {
               context.showErrorSnackBar(state.message);
@@ -50,7 +46,6 @@ class DashboardPage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () {
-                print('[Dashboard] Logout button pressed');
                 // Trigger logout event
                 context.read<AuthBloc>().add(const LogoutRequested());
               },

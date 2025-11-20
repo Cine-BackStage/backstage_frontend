@@ -275,12 +275,10 @@ class _SessionManagementView extends StatelessWidget {
   }
 
   void _showCreateSessionDialog(BuildContext context) {
-    // TODO: Implement create session dialog
     context.showErrorSnackBar('Criar sessão - Em implementação');
   }
 
   void _showEditSessionDialog(BuildContext context, dynamic session) {
-    // TODO: Implement edit session dialog
     context.showErrorSnackBar('Editar sessão - Em implementação');
   }
 

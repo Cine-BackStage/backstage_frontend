@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../../../../adapters/http/http_client.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/errors/exceptions.dart';
+import '../../../../core/services/logger_service.dart';
 import '../models/product_model.dart';
 import '../models/sale_model.dart';
 import '../models/sale_item_model.dart';
@@ -72,13 +73,14 @@ abstract class PosRemoteDataSource {
 /// POS remote datasource implementation
 class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   final HttpClient client;
+  final logger = LoggerService();
 
   PosRemoteDataSourceImpl(this.client);
 
   @override
   Future<List<ProductModel>> getProducts() async {
     try {
-      print('[POS Remote] Getting products');
+      logger.logDataSourceRequest('POSDataSource', 'getProducts', null);
       final response = await client.get(ApiConstants.inventory);
 
       if (response.data['success'] != true) {
@@ -92,10 +94,9 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
           .map((item) => ProductModel.fromJson(item as Map<String, dynamic>))
           .toList();
 
-      print('[POS Remote] Got ${products.length} products');
       return products;
-    } catch (e) {
-      print('[POS Remote] Get products error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'getProducts', e, stackTrace);
       throw AppException(message: 'Failed to get products: $e');
     }
   }
@@ -103,12 +104,13 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   @override
   Future<SaleModel> createSale({String? buyerCpf}) async {
     try {
-      print('[POS Remote] Creating sale');
+      final data = {
+        if (buyerCpf != null) 'buyerCpf': buyerCpf,
+      };
+      logger.logDataSourceRequest('POSDataSource', 'createSale', data);
       final response = await client.post(
         ApiConstants.sales,
-        data: {
-          if (buyerCpf != null) 'buyerCpf': buyerCpf,
-        },
+        data: data,
       );
 
       if (response.data['success'] != true) {
@@ -118,10 +120,9 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
       }
 
       final sale = SaleModel.fromJson(response.data['data']);
-      print('[POS Remote] Sale created: ${sale.id}');
       return sale;
-    } catch (e) {
-      print('[POS Remote] Create sale error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'createSale', e, stackTrace);
       throw AppException(message: 'Failed to create sale: $e');
     }
   }
@@ -129,7 +130,7 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   @override
   Future<SaleModel> getSaleById(String saleId) async {
     try {
-      print('[POS Remote] Getting sale: $saleId');
+      logger.logDataSourceRequest('POSDataSource', 'getSaleById', {'saleId': saleId});
       final response = await client.get(ApiConstants.saleDetails(saleId));
 
       if (response.data['success'] != true) {
@@ -138,14 +139,9 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
         );
       }
 
-      print('[POS Remote] Sale response: ${response.data['data']}');
-      if (response.data['data']['items'] != null) {
-        print('[POS Remote] Sale items: ${response.data['data']['items']}');
-      }
-
       return SaleModel.fromJson(response.data['data']);
-    } catch (e) {
-      print('[POS Remote] Get sale error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'getSaleById', e, stackTrace);
       throw AppException(message: 'Failed to get sale: $e');
     }
   }
@@ -161,8 +157,16 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
     required double unitPrice,
   }) async {
     try {
-      print('[POS Remote] Adding item to sale: $saleId');
-      print('[POS Remote] Request data: sku=$sku, sessionId=$sessionId, seatId=$seatId');
+      final data = {
+        'saleId': saleId,
+        if (sku != null) 'sku': sku,
+        if (sessionId != null) 'sessionId': sessionId,
+        if (seatId != null) 'seatId': seatId,
+        'description': description,
+        'quantity': quantity,
+        'unitPrice': unitPrice,
+      };
+      logger.logDataSourceRequest('POSDataSource', 'addItemToSale', data);
       final response = await client.post(
         ApiConstants.saleItems(saleId),
         data: {
@@ -175,8 +179,6 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
         },
       );
 
-      print('[POS Remote] Add item response: ${response.data}');
-
       if (response.data['success'] != true) {
         throw AppException(
           message: response.data['message'] ?? 'Failed to add item',
@@ -184,18 +186,15 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
       }
 
       try {
-        print('[POS Remote] Parsing item data: ${response.data['data']}');
         return SaleItemModel.fromJson(response.data['data']);
-      } catch (parseError) {
-        print('[POS Remote] Parse error: $parseError');
-        print('[POS Remote] Raw data: ${response.data['data']}');
+      } catch (parseError, stackTrace) {
+        logger.logDataSourceError('POSDataSource', 'addItemToSale', parseError, stackTrace);
         throw AppException(
           message: 'Failed to parse item response: $parseError',
         );
       }
-    } on DioException catch (dioError) {
-      print('[POS Remote] Add item Dio error: ${dioError.message}');
-      print('[POS Remote] Status code: ${dioError.response?.statusCode}');
+    } on DioException catch (dioError, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'addItemToSale', dioError, stackTrace);
 
       final statusCode = dioError.response?.statusCode;
       final message = dioError.response?.data?['message'] ?? 'Failed to add item';
@@ -204,8 +203,8 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
         message: message,
         statusCode: statusCode,
       );
-    } catch (e) {
-      print('[POS Remote] Add item error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'addItemToSale', e, stackTrace);
       throw AppException(message: 'Failed to add item: $e');
     }
   }
@@ -216,7 +215,7 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
     required String itemId,
   }) async {
     try {
-      print('[POS Remote] Removing item from sale: $itemId');
+      logger.logDataSourceRequest('POSDataSource', 'removeItemFromSale', {'saleId': saleId, 'itemId': itemId});
       final response = await client.delete(
         ApiConstants.saleItemRemove(saleId, itemId),
       );
@@ -226,8 +225,8 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
           message: response.data['message'] ?? 'Failed to remove item',
         );
       }
-    } catch (e) {
-      print('[POS Remote] Remove item error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'removeItemFromSale', e, stackTrace);
       throw AppException(message: 'Failed to remove item: $e');
     }
   }
@@ -238,13 +237,14 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
     required double subtotal,
   }) async {
     try {
-      print('[POS Remote] Validating discount: $code');
+      final data = {
+        'code': code,
+        'subtotal': subtotal,
+      };
+      logger.logDataSourceRequest('POSDataSource', 'validateDiscount', data);
       final response = await client.post(
         ApiConstants.saleDiscountValidate,
-        data: {
-          'code': code,
-          'subtotal': subtotal,
-        },
+        data: data,
       );
 
       if (response.data['success'] != true) {
@@ -254,12 +254,12 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
       }
 
       return response.data['data'] as Map<String, dynamic>;
-    } on DioException catch (dioError) {
-      print('[POS Remote] Validate discount Dio error: ${dioError.message}');
+    } on DioException catch (dioError, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'validateDiscount', dioError, stackTrace);
       final message = dioError.response?.data?['message'] ?? 'Failed to validate discount';
       throw AppException(message: message);
-    } catch (e) {
-      print('[POS Remote] Validate discount error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'validateDiscount', e, stackTrace);
       throw AppException(message: 'Failed to validate discount: $e');
     }
   }
@@ -270,7 +270,8 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
     required String code,
   }) async {
     try {
-      print('[POS Remote] Applying discount: $code');
+      final data = {'saleId': saleId, 'code': code};
+      logger.logDataSourceRequest('POSDataSource', 'applyDiscount', data);
       final response = await client.post(
         ApiConstants.saleDiscount(saleId),
         data: {'code': code},
@@ -283,8 +284,8 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
       }
 
       return SaleModel.fromJson(response.data['data']);
-    } catch (e) {
-      print('[POS Remote] Apply discount error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'applyDiscount', e, stackTrace);
       throw AppException(message: 'Failed to apply discount: $e');
     }
   }
@@ -297,7 +298,13 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
     String? authCode,
   }) async {
     try {
-      print('[POS Remote] Adding payment: ${method.value}');
+      final data = {
+        'saleId': saleId,
+        'method': method.value,
+        'amount': amount,
+        if (authCode != null) 'authCode': authCode,
+      };
+      logger.logDataSourceRequest('POSDataSource', 'addPayment', data);
       final response = await client.post(
         ApiConstants.salePayments(saleId),
         data: {
@@ -314,8 +321,8 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
       }
 
       return PaymentModel.fromJson(response.data['data']);
-    } catch (e) {
-      print('[POS Remote] Add payment error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'addPayment', e, stackTrace);
       throw AppException(message: 'Failed to add payment: $e');
     }
   }
@@ -326,7 +333,7 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
     required String paymentId,
   }) async {
     try {
-      print('[POS Remote] Removing payment: $paymentId from sale: $saleId');
+      logger.logDataSourceRequest('POSDataSource', 'removePayment', {'saleId': saleId, 'paymentId': paymentId});
       final response = await client.delete(
         '${ApiConstants.salePayments(saleId)}/$paymentId',
       );
@@ -336,8 +343,8 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
           message: response.data['message'] ?? 'Failed to remove payment',
         );
       }
-    } catch (e) {
-      print('[POS Remote] Remove payment error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'removePayment', e, stackTrace);
       throw AppException(message: 'Failed to remove payment: $e');
     }
   }
@@ -345,7 +352,7 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   @override
   Future<SaleModel> finalizeSale(String saleId) async {
     try {
-      print('[POS Remote] Finalizing sale: $saleId');
+      logger.logDataSourceRequest('POSDataSource', 'finalizeSale', {'saleId': saleId});
       final response = await client.post(ApiConstants.saleFinalize(saleId));
 
       if (response.data['success'] != true) {
@@ -355,8 +362,8 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
       }
 
       return SaleModel.fromJson(response.data['data']);
-    } catch (e) {
-      print('[POS Remote] Finalize sale error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'finalizeSale', e, stackTrace);
       throw AppException(message: 'Failed to finalize sale: $e');
     }
   }
@@ -364,7 +371,7 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   @override
   Future<SaleModel> cancelSale(String saleId) async {
     try {
-      print('[POS Remote] Canceling sale: $saleId');
+      logger.logDataSourceRequest('POSDataSource', 'cancelSale', {'saleId': saleId});
       final response = await client.post(ApiConstants.saleCancel(saleId));
 
       if (response.data['success'] != true) {
@@ -374,8 +381,8 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
       }
 
       return SaleModel.fromJson(response.data['data']);
-    } catch (e) {
-      print('[POS Remote] Cancel sale error: $e');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('POSDataSource', 'cancelSale', e, stackTrace);
       throw AppException(message: 'Failed to cancel sale: $e');
     }
   }

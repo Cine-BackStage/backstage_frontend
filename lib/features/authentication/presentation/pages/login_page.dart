@@ -38,8 +38,6 @@ class LoginView extends StatelessWidget {
               });
             },
             error: (message) {
-              // Log detailed error to console
-              print('[Login Error] $message');
               // Show generic error to user
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (context.mounted) {

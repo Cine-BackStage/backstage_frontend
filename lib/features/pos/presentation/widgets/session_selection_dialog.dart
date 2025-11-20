@@ -26,7 +26,6 @@ class _SessionSelectionDialogState extends State<SessionSelectionDialog> {
   void initState() {
     super.initState();
     // Load all upcoming sessions (don't filter by specific date to avoid timezone issues)
-    print('🎬 SessionSelectionDialog: Loading all upcoming sessions');
     context.read<SessionsBloc>().add(const LoadSessionsRequested());
   }
 
@@ -72,8 +71,6 @@ class _SessionSelectionDialogState extends State<SessionSelectionDialog> {
                     initial: () => const Center(child: CircularProgressIndicator()),
                     loading: () => const Center(child: CircularProgressIndicator()),
                     sessionsLoaded: (sessions) {
-                      print('🎬 SessionSelectionDialog: Received ${sessions.length} sessions');
-
                       // Filter sessions that can sell tickets:
                       // - Not cancelled or completed
                       // - Has available seats
@@ -85,14 +82,8 @@ class _SessionSelectionDialogState extends State<SessionSelectionDialog> {
                                        s.availableSeats > 0 &&
                                        s.endTime.isAfter(now);
 
-                        if (canSell) {
-                          print('✅ Session ${s.movieTitle} at ${s.startTime} - Available: ${s.availableSeats} seats, Status: ${s.status}');
-                        }
-
                         return canSell;
                       }).toList();
-
-                      print('🎬 SessionSelectionDialog: Filtered to ${availableSessions.length} available sessions');
 
                       if (availableSessions.isEmpty) {
                         return Center(

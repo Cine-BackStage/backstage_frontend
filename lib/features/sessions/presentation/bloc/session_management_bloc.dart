@@ -54,8 +54,6 @@ class SessionManagementBloc
     final previousState = state;
     emit(const SessionManagementCreating());
 
-    print('📝 Creating session - Movie: ${event.movieId}, Room: ${event.roomId}');
-
     final result = await createSessionUseCase(
       CreateSessionParams(
         movieId: event.movieId,
@@ -67,7 +65,6 @@ class SessionManagementBloc
 
     result.fold(
       (failure) {
-        print('❌ Error creating session: ${failure.userMessage}');
         // Restore previous state instead of showing error screen
         if (previousState is SessionManagementLoaded) {
           emit(previousState);
@@ -76,7 +73,6 @@ class SessionManagementBloc
         emit(SessionManagementError(failure: failure));
       },
       (session) {
-        print('✅ Session created successfully: ${session.id}');
         emit(SessionManagementCreated(session: session));
         // Automatically refresh the list
         add(const RefreshSessionsListRequested());
@@ -92,8 +88,6 @@ class SessionManagementBloc
     final previousState = state;
     emit(const SessionManagementUpdating());
 
-    print('🔄 Updating session: ${event.sessionId}');
-
     final result = await updateSessionUseCase(
       UpdateSessionParams(
         sessionId: event.sessionId,
@@ -107,7 +101,6 @@ class SessionManagementBloc
 
     result.fold(
       (failure) {
-        print('❌ Error updating session: ${failure.userMessage}');
         // Restore previous state instead of showing error screen
         if (previousState is SessionManagementLoaded) {
           emit(previousState);
@@ -116,7 +109,6 @@ class SessionManagementBloc
         emit(SessionManagementError(failure: failure));
       },
       (session) {
-        print('✅ Session updated successfully');
         emit(SessionManagementUpdated(session: session));
         // Automatically refresh the list
         add(const RefreshSessionsListRequested());

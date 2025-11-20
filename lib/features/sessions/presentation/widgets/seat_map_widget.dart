@@ -37,7 +37,7 @@ class SeatMapWidget extends StatelessWidget {
             margin: const EdgeInsets.all(24),
             padding: const EdgeInsets.symmetric(vertical: 12),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../../../../adapters/http/http_client.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/errors/exceptions.dart';
+import '../../../../core/services/logger_service.dart';
 import '../models/detailed_sales_report_model.dart';
 import '../models/employee_report_model.dart';
 import '../models/sales_summary_model.dart';
@@ -36,40 +37,34 @@ abstract class ReportsRemoteDataSource {
 /// Reports remote data source implementation
 class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
   final HttpClient client;
+  final logger = LoggerService();
 
   ReportsRemoteDataSourceImpl(this.client);
 
   @override
   Future<SalesSummaryModel> getSalesSummary() async {
     try {
-      print('[Reports Remote] Fetching sales summary from ${ApiConstants.salesReportsSummary}');
+      logger.logDataSourceRequest('ReportsDataSource', 'getSalesSummary', null);
       final response = await client.get(ApiConstants.salesReportsSummary);
-
-      print('[Reports Remote] Sales summary response status: ${response.statusCode}');
-      print('[Reports Remote] Sales summary response data: ${response.data}');
 
       if (response.data['success'] == true) {
         final data = response.data['data'] as Map<String, dynamic>;
-        print('[Reports Remote] Sales summary data parsed successfully');
         return SalesSummaryModel.fromJson(data);
       } else {
         final errorMsg = response.data['message'] ?? 'Failed to fetch sales summary';
-        print('[Reports Remote] Sales summary failed: $errorMsg');
         throw AppException(
           message: errorMsg,
           statusCode: response.statusCode,
         );
       }
-    } on DioException catch (e) {
-      print('[Reports Remote] Sales summary DioException: ${e.message}');
-      print('[Reports Remote] Sales summary error response: ${e.response?.data}');
-      print('[Reports Remote] Sales summary error status: ${e.response?.statusCode}');
+    } on DioException catch (e, stackTrace) {
+      logger.logDataSourceError('ReportsDataSource', 'getSalesSummary', e, stackTrace);
       throw AppException(
         message: e.response?.data['message'] ?? e.message ?? 'Failed to fetch sales summary',
         statusCode: e.response?.statusCode,
       );
-    } catch (e) {
-      print('[Reports Remote] Sales summary unexpected error: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('ReportsDataSource', 'getSalesSummary', e, stackTrace);
       throw AppException(message: e.toString());
     }
   }
@@ -92,40 +87,32 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
         queryParams['cashierCpf'] = cashierCpf;
       }
 
-      print('[Reports Remote] Fetching detailed sales report from ${ApiConstants.salesReportsDetailed}');
-      print('[Reports Remote] Query params: $queryParams');
+      logger.logDataSourceRequest('ReportsDataSource', 'getDetailedSalesReport', queryParams);
 
       final response = await client.get(
         ApiConstants.salesReportsDetailed,
         queryParameters: queryParams,
       );
 
-      print('[Reports Remote] Detailed sales response status: ${response.statusCode}');
-      print('[Reports Remote] Detailed sales response data: ${response.data}');
-
       if (response.data['success'] == true) {
         // The backend returns data directly in the response, not nested under 'data'
         final data = response.data as Map<String, dynamic>;
-        print('[Reports Remote] Detailed sales data parsed successfully');
         return DetailedSalesReportModel.fromJson(data);
       } else {
         final errorMsg = response.data['message'] ?? 'Failed to fetch detailed sales report';
-        print('[Reports Remote] Detailed sales failed: $errorMsg');
         throw AppException(
           message: errorMsg,
           statusCode: response.statusCode,
         );
       }
-    } on DioException catch (e) {
-      print('[Reports Remote] Detailed sales DioException: ${e.message}');
-      print('[Reports Remote] Detailed sales error response: ${e.response?.data}');
-      print('[Reports Remote] Detailed sales error status: ${e.response?.statusCode}');
+    } on DioException catch (e, stackTrace) {
+      logger.logDataSourceError('ReportsDataSource', 'getDetailedSalesReport', e, stackTrace);
       throw AppException(
         message: e.response?.data['message'] ?? e.message ?? 'Failed to fetch detailed sales report',
         statusCode: e.response?.statusCode,
       );
-    } catch (e) {
-      print('[Reports Remote] Detailed sales unexpected error: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('ReportsDataSource', 'getDetailedSalesReport', e, stackTrace);
       throw AppException(message: e.toString());
     }
   }
@@ -153,40 +140,32 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
         queryParams['employeeCpf'] = employeeCpf;
       }
 
-      print('[Reports Remote] Fetching ticket sales report from ${ApiConstants.ticketsReportsSales}');
-      print('[Reports Remote] Query params: $queryParams');
+      logger.logDataSourceRequest('ReportsDataSource', 'getTicketSalesReport', queryParams);
 
       final response = await client.get(
         ApiConstants.ticketsReportsSales,
         queryParameters: queryParams,
       );
 
-      print('[Reports Remote] Ticket sales response status: ${response.statusCode}');
-      print('[Reports Remote] Ticket sales response data: ${response.data}');
-
       if (response.data['success'] == true) {
         // The backend returns data directly in the response, not nested under 'data'
         final data = response.data as Map<String, dynamic>;
-        print('[Reports Remote] Ticket sales data parsed successfully');
         return TicketSalesReportModel.fromJson(data);
       } else {
         final errorMsg = response.data['message'] ?? 'Failed to fetch ticket sales report';
-        print('[Reports Remote] Ticket sales failed: $errorMsg');
         throw AppException(
           message: errorMsg,
           statusCode: response.statusCode,
         );
       }
-    } on DioException catch (e) {
-      print('[Reports Remote] Ticket sales DioException: ${e.message}');
-      print('[Reports Remote] Ticket sales error response: ${e.response?.data}');
-      print('[Reports Remote] Ticket sales error status: ${e.response?.statusCode}');
+    } on DioException catch (e, stackTrace) {
+      logger.logDataSourceError('ReportsDataSource', 'getTicketSalesReport', e, stackTrace);
       throw AppException(
         message: e.response?.data['message'] ?? e.message ?? 'Failed to fetch ticket sales report',
         statusCode: e.response?.statusCode,
       );
-    } catch (e) {
-      print('[Reports Remote] Ticket sales unexpected error: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('ReportsDataSource', 'getTicketSalesReport', e, stackTrace);
       throw AppException(message: e.toString());
     }
   }
@@ -207,40 +186,32 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
         queryParams['employeeCpf'] = employeeCpf;
       }
 
-      print('[Reports Remote] Fetching employee report from ${ApiConstants.employeeReportsConsolidated}');
-      print('[Reports Remote] Query params: $queryParams');
+      logger.logDataSourceRequest('ReportsDataSource', 'getEmployeeReport', queryParams);
 
       final response = await client.get(
         ApiConstants.employeeReportsConsolidated,
         queryParameters: queryParams,
       );
 
-      print('[Reports Remote] Employee report response status: ${response.statusCode}');
-      print('[Reports Remote] Employee report response data: ${response.data}');
-
       if (response.data['success'] == true) {
         // The backend returns data directly in the response, not nested under 'data'
         final data = response.data as Map<String, dynamic>;
-        print('[Reports Remote] Employee report data parsed successfully');
         return EmployeeReportModel.fromJson(data);
       } else {
         final errorMsg = response.data['message'] ?? 'Failed to fetch employee report';
-        print('[Reports Remote] Employee report failed: $errorMsg');
         throw AppException(
           message: errorMsg,
           statusCode: response.statusCode,
         );
       }
-    } on DioException catch (e) {
-      print('[Reports Remote] Employee report DioException: ${e.message}');
-      print('[Reports Remote] Employee report error response: ${e.response?.data}');
-      print('[Reports Remote] Employee report error status: ${e.response?.statusCode}');
+    } on DioException catch (e, stackTrace) {
+      logger.logDataSourceError('ReportsDataSource', 'getEmployeeReport', e, stackTrace);
       throw AppException(
         message: e.response?.data['message'] ?? e.message ?? 'Failed to fetch employee report',
         statusCode: e.response?.statusCode,
       );
-    } catch (e) {
-      print('[Reports Remote] Employee report unexpected error: ${e.toString()}');
+    } catch (e, stackTrace) {
+      logger.logDataSourceError('ReportsDataSource', 'getEmployeeReport', e, stackTrace);
       throw AppException(message: e.toString());
     }
   }
