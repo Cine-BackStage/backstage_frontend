@@ -50,7 +50,11 @@ class SessionManagementBloc
     CreateSessionRequested event,
     Emitter<SessionManagementState> emit,
   ) async {
+    // Save current state to restore if error
+    final previousState = state;
     emit(const SessionManagementCreating());
+
+    print('📝 Creating session - Movie: ${event.movieId}, Room: ${event.roomId}');
 
     final result = await createSessionUseCase(
       CreateSessionParams(
@@ -62,8 +66,17 @@ class SessionManagementBloc
     );
 
     result.fold(
-      (failure) => emit(SessionManagementError(failure: failure)),
+      (failure) {
+        print('❌ Error creating session: ${failure.userMessage}');
+        // Restore previous state instead of showing error screen
+        if (previousState is SessionManagementLoaded) {
+          emit(previousState);
+        }
+        // Then emit error for snackbar
+        emit(SessionManagementError(failure: failure));
+      },
       (session) {
+        print('✅ Session created successfully: ${session.id}');
         emit(SessionManagementCreated(session: session));
         // Automatically refresh the list
         add(const RefreshSessionsListRequested());
@@ -75,7 +88,11 @@ class SessionManagementBloc
     UpdateSessionRequested event,
     Emitter<SessionManagementState> emit,
   ) async {
+    // Save current state to restore if error
+    final previousState = state;
     emit(const SessionManagementUpdating());
+
+    print('🔄 Updating session: ${event.sessionId}');
 
     final result = await updateSessionUseCase(
       UpdateSessionParams(
@@ -89,8 +106,17 @@ class SessionManagementBloc
     );
 
     result.fold(
-      (failure) => emit(SessionManagementError(failure: failure)),
+      (failure) {
+        print('❌ Error updating session: ${failure.userMessage}');
+        // Restore previous state instead of showing error screen
+        if (previousState is SessionManagementLoaded) {
+          emit(previousState);
+        }
+        // Then emit error for snackbar
+        emit(SessionManagementError(failure: failure));
+      },
       (session) {
+        print('✅ Session updated successfully');
         emit(SessionManagementUpdated(session: session));
         // Automatically refresh the list
         add(const RefreshSessionsListRequested());

@@ -15,8 +15,8 @@ import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'features/pos/presentation/pages/pos_page.dart';
 import 'features/pos/presentation/bloc/pos_bloc.dart';
-import 'features/sessions/presentation/pages/sessions_list_page.dart';
 import 'features/sessions/presentation/pages/seat_selection_page.dart';
+import 'features/sessions/presentation/pages/integrated_management_page.dart';
 import 'features/sessions/presentation/bloc/sessions_bloc.dart';
 import 'features/inventory/presentation/pages/inventory_page.dart';
 import 'features/reports/presentation/pages/reports_page.dart';
@@ -142,10 +142,7 @@ class _BackstageAppState extends State<BackstageApp> {
       case AppRoutes.sessions:
         route = MaterialPageRoute(
           settings: settings,
-          builder: (_) => BlocProvider(
-            create: (context) => serviceLocator<SessionsBloc>(),
-            child: const SessionsListPage(),
-          ),
+          builder: (_) => const IntegratedManagementPage(),
         );
         break;
 

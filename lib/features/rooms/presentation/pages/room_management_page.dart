@@ -284,12 +284,8 @@ class _RoomManagementViewState extends State<_RoomManagementView> {
         return Colors.blue;
       case RoomType.threeD:
         return Colors.purple;
-      case RoomType.imax:
-        return Colors.orange;
       case RoomType.extreme:
         return Colors.red;
-      case RoomType.vip:
-        return AppColors.goldenReel;
     }
   }
 

@@ -25,8 +25,9 @@ class _SessionSelectionDialogState extends State<SessionSelectionDialog> {
   @override
   void initState() {
     super.initState();
-    // Load today's sessions when dialog opens
-    context.read<SessionsBloc>().add(LoadSessionsRequested(date: DateTime.now()));
+    // Load all upcoming sessions (don't filter by specific date to avoid timezone issues)
+    print('🎬 SessionSelectionDialog: Loading all upcoming sessions');
+    context.read<SessionsBloc>().add(const LoadSessionsRequested());
   }
 
   @override
@@ -71,10 +72,27 @@ class _SessionSelectionDialogState extends State<SessionSelectionDialog> {
                     initial: () => const Center(child: CircularProgressIndicator()),
                     loading: () => const Center(child: CircularProgressIndicator()),
                     sessionsLoaded: (sessions) {
-                      // Filter only SCHEDULED sessions with available seats
-                      final availableSessions = sessions
-                          .where((s) => s.isScheduled && s.availableSeats > 0)
-                          .toList();
+                      print('🎬 SessionSelectionDialog: Received ${sessions.length} sessions');
+
+                      // Filter sessions that can sell tickets:
+                      // - Not cancelled or completed
+                      // - Has available seats
+                      // - Start time is in the future or happening now
+                      final now = DateTime.now();
+                      final availableSessions = sessions.where((s) {
+                        final canSell = !s.isCanceled &&
+                                       !s.isCompleted &&
+                                       s.availableSeats > 0 &&
+                                       s.endTime.isAfter(now);
+
+                        if (canSell) {
+                          print('✅ Session ${s.movieTitle} at ${s.startTime} - Available: ${s.availableSeats} seats, Status: ${s.status}');
+                        }
+
+                        return canSell;
+                      }).toList();
+
+                      print('🎬 SessionSelectionDialog: Filtered to ${availableSessions.length} available sessions');
 
                       if (availableSessions.isEmpty) {
                         return Center(
@@ -180,6 +198,15 @@ class _SessionSelectionDialogState extends State<SessionSelectionDialog> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
+                        Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                        const SizedBox(width: 4),
+                        Text(
+                          DateFormatter.date(session.startTime),
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
                         Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Text(

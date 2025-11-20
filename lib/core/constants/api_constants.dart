@@ -48,10 +48,10 @@ class ApiConstants {
 
   // Movies
   static const String movies = '/api/movies';
-  static String movieDetails(int id) => '/api/movies/$id';
+  static String movieDetails(String id) => '/api/movies/$id';
   static const String moviesSearch = '/api/movies/search';
-  static String movieStats(int id) => '/api/movies/$id/stats';
-  static String movieActivate(int id) => '/api/movies/$id/activate';
+  static String movieStats(String id) => '/api/movies/$id/stats';
+  static String movieActivate(String id) => '/api/movies/$id/activate';
 
   // Customers
   static const String customers = '/api/customers';

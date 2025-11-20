@@ -3,9 +3,7 @@ import 'package:equatable/equatable.dart';
 enum RoomType {
   twoD('TWO_D', '2D'),
   threeD('THREE_D', '3D'),
-  imax('IMAX', 'IMAX'),
-  extreme('EXTREME', 'Extreme'),
-  vip('VIP', 'VIP');
+  extreme('EXTREME', 'Extreme');
 
   final String value;
   final String label;

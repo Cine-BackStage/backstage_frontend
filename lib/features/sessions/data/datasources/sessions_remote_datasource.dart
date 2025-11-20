@@ -52,6 +52,7 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
     int? movieId,
     int? roomId,
   }) async {
+    print('📡 Datasource: Getting sessions - date: $date, movieId: $movieId, roomId: $roomId');
     final queryParams = <String, dynamic>{};
 
     // API expects startDate and endDate, not just date
@@ -63,6 +64,7 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
 
       queryParams['startDate'] = startOfDay.toIso8601String();
       queryParams['endDate'] = endOfDay.toIso8601String();
+      print('📡 Datasource: Date filter - startDate: ${queryParams['startDate']}, endDate: ${queryParams['endDate']}');
     }
 
     if (movieId != null) {
@@ -72,12 +74,14 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
       queryParams['roomId'] = roomId.toString();
     }
 
+    print('📡 Datasource: Query params: $queryParams');
     final response = await client.get(
       ApiConstants.sessions,
       queryParameters: queryParams,
     );
 
     final data = response.data['data'] as List;
+    print('✅ Datasource: Fetched ${data.length} sessions');
     return data.map((json) => SessionModel.fromJson(json)).toList();
   }
 
