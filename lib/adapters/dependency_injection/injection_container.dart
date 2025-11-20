@@ -11,6 +11,7 @@ import '../../features/movies/di/movies_injection_container.dart';
 import '../../features/rooms/di/rooms_injection_container.dart';
 import '../../features/profile/di/profile_injection_container.dart';
 import '../../features/inventory/di/inventory_injection_container.dart';
+import '../../features/reports/di/reports_injection_container.dart';
 
 /// Central Dependency Injection Container
 /// Coordinates all module injection containers and core services
@@ -70,6 +71,9 @@ class InjectionContainer {
 
     // Inventory Module
     await InventoryInjectionContainer.init();
+
+    // Reports Module
+    await ReportsInjectionContainer.init();
 
     // TODO: Add other feature modules
   }

@@ -59,7 +59,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   /// Get sales summary
   Future<SalesSummaryModel> _getSalesSummary() async {
     try {
-      final response = await client.get(ApiConstants.salesReportSummary);
+      final response = await client.get(ApiConstants.salesReportsSummary);
 
       if (response.data['success'] == true) {
         final data = response.data['data'] as Map<String, dynamic>? ?? {};

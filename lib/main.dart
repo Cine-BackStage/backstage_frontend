@@ -20,6 +20,10 @@ import 'features/sessions/presentation/pages/integrated_management_page.dart';
 import 'features/sessions/presentation/bloc/sessions_bloc.dart';
 import 'features/inventory/presentation/pages/inventory_page.dart';
 import 'features/reports/presentation/pages/reports_page.dart';
+import 'features/reports/presentation/pages/detailed_sales_report_page.dart';
+import 'features/reports/presentation/pages/ticket_sales_report_page.dart';
+import 'features/reports/presentation/pages/employee_report_page.dart';
+import 'features/reports/presentation/bloc/reports_bloc.dart';
 import 'features/profile/presentation/pages/profile_page.dart';
 import 'features/profile/presentation/bloc/profile_bloc.dart';
 import 'adapters/dependency_injection/injection_container.dart';
@@ -159,7 +163,40 @@ class _BackstageAppState extends State<BackstageApp> {
       case AppRoutes.reports:
         route = MaterialPageRoute(
           settings: settings,
-          builder: (_) => const ReportsPage(),
+          builder: (_) => BlocProvider(
+            create: (context) => serviceLocator<ReportsBloc>(),
+            child: const ReportsDashboardPage(),
+          ),
+        );
+        break;
+
+      case '/reports/detailed-sales':
+        route = MaterialPageRoute(
+          settings: settings,
+          builder: (_) => BlocProvider(
+            create: (context) => serviceLocator<ReportsBloc>(),
+            child: const DetailedSalesReportPage(),
+          ),
+        );
+        break;
+
+      case '/reports/ticket-sales':
+        route = MaterialPageRoute(
+          settings: settings,
+          builder: (_) => BlocProvider(
+            create: (context) => serviceLocator<ReportsBloc>(),
+            child: const TicketSalesReportPage(),
+          ),
+        );
+        break;
+
+      case '/reports/employees':
+        route = MaterialPageRoute(
+          settings: settings,
+          builder: (_) => BlocProvider(
+            create: (context) => serviceLocator<ReportsBloc>(),
+            child: const EmployeeReportPage(),
+          ),
         );
         break;
 

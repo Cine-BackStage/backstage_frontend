@@ -88,9 +88,10 @@ class ApiConstants {
   static String seatMapSeats(String seatMapId) => '/api/rooms/seat-maps/$seatMapId/seats';
 
   // Reports
-  static const String salesReportDaily = '/api/sales/reports/daily';
-  static const String salesReportSummary = '/api/sales/reports/summary';
-  static const String ticketsReportSales = '/api/tickets/reports/sales';
+  static const String salesReportsSummary = '/api/sales/reports/summary';
+  static const String salesReportsDetailed = '/api/sales/reports/detailed';
+  static const String ticketsReportsSales = '/api/tickets/reports/sales';
+  static const String employeeReportsConsolidated = '/api/employees/reports/consolidated';
   static const String customerRetentionReport = '/api/customers/reports/retention';
 
   // System Admin (if needed)
