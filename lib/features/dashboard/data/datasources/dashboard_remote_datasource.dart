@@ -88,11 +88,15 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
     try {
       // Get today's sessions
       final today = DateTime.now();
-      final dateStr = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+      final startOfDay = DateTime(today.year, today.month, today.day);
+      final endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
 
       final response = await client.get(
         ApiConstants.sessions,
-        queryParameters: {'date': dateStr},
+        queryParameters: {
+          'startDate': startOfDay.toIso8601String(),
+          'endDate': endOfDay.toIso8601String(),
+        },
       );
 
       if (response.data['success'] == true) {

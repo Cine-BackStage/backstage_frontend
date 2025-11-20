@@ -37,10 +37,9 @@ class DashboardPage extends StatelessWidget {
           if (state is Unauthenticated) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (context.mounted) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  AppRoutes.login,
-                  (route) => false,
-                );
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
               }
             });
           } else if (state is AuthError) {
@@ -64,11 +63,13 @@ class DashboardPage extends StatelessWidget {
 
                   dashboardState.whenOrNull(
                     loaded: (stats) {
-                      alertCount = stats.inventorySummary.lowStockItems +
+                      alertCount =
+                          stats.inventorySummary.lowStockItems +
                           stats.inventorySummary.expiringItems;
                     },
                     refreshing: (stats) {
-                      alertCount = stats.inventorySummary.lowStockItems +
+                      alertCount =
+                          stats.inventorySummary.lowStockItems +
                           stats.inventorySummary.expiringItems;
                     },
                   );
@@ -166,7 +167,9 @@ class _DashboardBody extends StatelessWidget {
                       const SizedBox(height: 24),
                       ElevatedButton.icon(
                         onPressed: () {
-                          context.read<DashboardBloc>().add(const LoadDashboardStats());
+                          context.read<DashboardBloc>().add(
+                            const LoadDashboardStats(),
+                          );
                         },
                         icon: const Icon(Icons.refresh),
                         label: const Text('Tentar novamente'),
@@ -201,8 +204,7 @@ class _DashboardBody extends StatelessWidget {
             },
           ),
 
-          if (isRefreshing)
-            const LinearProgressIndicator(),
+          if (isRefreshing) const LinearProgressIndicator(),
 
           const SizedBox(height: 8),
 
@@ -231,17 +233,19 @@ class _DashboardBody extends StatelessWidget {
                   children: [
                     StatsCard(
                       title: 'Vendas Hoje',
-                      value: CurrencyFormatter.format(stats.salesSummary.todayRevenue),
+                      value: CurrencyFormatter.format(
+                        stats.salesSummary.todayRevenue,
+                      ),
                       icon: Icons.attach_money,
                       iconColor: Colors.green,
-                      subtitle: '${stats.salesSummary.todayTransactions} transações',
+                      subtitle:
+                          '${stats.salesSummary.todayTransactions} transações',
                     ),
                     StatsCard(
-                      title: 'Sessões Ativas',
-                      value: '${stats.sessionSummary.activeSessionsToday}',
+                      title: 'Sessões Hoje',
+                      value: '${stats.sessionSummary.totalSessionsToday}',
                       icon: Icons.play_circle,
                       iconColor: Colors.blue,
-                      subtitle: '${stats.sessionSummary.totalSessionsToday} no total',
                     ),
                     StatsCard(
                       title: 'Itens Baixo Estoque',
@@ -249,12 +253,6 @@ class _DashboardBody extends StatelessWidget {
                       icon: Icons.inventory_2,
                       iconColor: Colors.orange,
                       subtitle: '${stats.inventorySummary.totalItems} itens',
-                    ),
-                    StatsCard(
-                      title: 'Clientes Ativos',
-                      value: '${stats.activeCustomers}',
-                      icon: Icons.people,
-                      iconColor: Colors.purple,
                     ),
                   ],
                 ),
