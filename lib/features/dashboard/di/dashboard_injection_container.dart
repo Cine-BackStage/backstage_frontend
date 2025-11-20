@@ -37,8 +37,8 @@ class DashboardInjectionContainer {
       ),
     );
 
-    // BLoC
-    serviceLocator.registerFactory<DashboardBloc>(
+    // BLoC - Using LazySingleton so it can be accessed across the app
+    serviceLocator.registerLazySingleton<DashboardBloc>(
       () => DashboardBloc(
         getDashboardStatsUseCase: serviceLocator<GetDashboardStatsUseCase>(),
         refreshDashboardUseCase: serviceLocator<RefreshDashboardUseCase>(),

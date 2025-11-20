@@ -10,6 +10,7 @@ import '../../features/sessions/di/sessions_injection_container.dart';
 import '../../features/movies/di/movies_injection_container.dart';
 import '../../features/rooms/di/rooms_injection_container.dart';
 import '../../features/profile/di/profile_injection_container.dart';
+import '../../features/inventory/di/inventory_injection_container.dart';
 
 /// Central Dependency Injection Container
 /// Coordinates all module injection containers and core services
@@ -67,7 +68,9 @@ class InjectionContainer {
     // Profile Module
     await ProfileInjectionContainer.init();
 
+    // Inventory Module
+    await InventoryInjectionContainer.init();
+
     // TODO: Add other feature modules
-    // await InventoryInjectionContainer.init();
   }
 }

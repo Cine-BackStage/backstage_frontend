@@ -8,8 +8,10 @@ class ProductModel extends Product {
     required super.unitPrice,
     required super.category,
     required super.qtyOnHand,
+    required super.reorderLevel,
     super.barcode,
     super.isActive,
+    super.expiryDate,
   });
 
   /// Create from JSON
@@ -26,8 +28,18 @@ class ProductModel extends Product {
     final itemData = isFood ? json['food'] : json['collectable'];
 
     String category = 'Other';
+    DateTime? expiryDate;
+
     if (isFood && itemData != null) {
       category = itemData['category'] ?? 'Snacks';
+      // Parse expiry date from food data
+      if (itemData['expiryDate'] != null) {
+        try {
+          expiryDate = DateTime.parse(itemData['expiryDate'] as String);
+        } catch (e) {
+          expiryDate = null;
+        }
+      }
     } else if (itemData != null) {
       category = 'Collectables';
     }
@@ -38,8 +50,10 @@ class ProductModel extends Product {
       unitPrice: _parseDecimal(json['unitPrice']),
       category: category,
       qtyOnHand: _parseInt(json['qtyOnHand']),
+      reorderLevel: _parseInt(json['reorderLevel']),
       barcode: json['barcode'] as String?,
       isActive: json['isActive'] as bool? ?? true,
+      expiryDate: expiryDate,
     );
   }
 
@@ -51,8 +65,10 @@ class ProductModel extends Product {
       'unitPrice': unitPrice,
       'category': category,
       'qtyOnHand': qtyOnHand,
+      'reorderLevel': reorderLevel,
       'barcode': barcode,
       'isActive': isActive,
+      if (expiryDate != null) 'expiryDate': expiryDate!.toIso8601String(),
     };
   }
 
@@ -78,8 +94,10 @@ class ProductModel extends Product {
       unitPrice: unitPrice,
       category: category,
       qtyOnHand: qtyOnHand,
+      reorderLevel: reorderLevel,
       barcode: barcode,
       isActive: isActive,
+      expiryDate: expiryDate,
     );
   }
 }

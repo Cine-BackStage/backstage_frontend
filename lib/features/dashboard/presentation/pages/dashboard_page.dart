@@ -26,8 +26,8 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => serviceLocator<DashboardBloc>()
+        BlocProvider.value(
+          value: serviceLocator<DashboardBloc>()
             ..add(const LoadDashboardStats()),
         ),
       ],

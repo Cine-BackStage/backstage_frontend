@@ -9,6 +9,7 @@ import 'dashboard_state.dart';
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   final GetDashboardStatsUseCase getDashboardStatsUseCase;
   final RefreshDashboardUseCase refreshDashboardUseCase;
+  DateTime? _lastRefreshTime;
 
   DashboardBloc({
     required this.getDashboardStatsUseCase,
@@ -45,7 +46,18 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     RefreshDashboard event,
     Emitter<DashboardState> emit,
   ) async {
+    // Throttle: Only allow refresh every 2 seconds to prevent rate limiting
+    final now = DateTime.now();
+    if (_lastRefreshTime != null) {
+      final timeSinceLastRefresh = now.difference(_lastRefreshTime!);
+      if (timeSinceLastRefresh.inSeconds < 2) {
+        print('[DashboardBloc] Refresh throttled (last refresh: ${timeSinceLastRefresh.inMilliseconds}ms ago)');
+        return;
+      }
+    }
+
     print('[DashboardBloc] Refreshing dashboard');
+    _lastRefreshTime = now;
 
     // If we have data, show refreshing state
     if (state is DashboardLoaded) {
