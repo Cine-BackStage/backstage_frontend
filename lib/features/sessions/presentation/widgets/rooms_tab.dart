@@ -88,14 +88,21 @@ class RoomsTab extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.all(16),
-          color: AppColors.surface,
+          color: AppColors.background,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '${rooms.length} salas',
-                style: AppTextStyles.bodyLarge.copyWith(
-                  fontWeight: FontWeight.bold,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.grayCurtain,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  '${rooms.length} salas',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               ElevatedButton.icon(

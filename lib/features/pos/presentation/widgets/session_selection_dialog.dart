@@ -162,9 +162,33 @@ class _SessionSelectionDialogState extends State<SessionSelectionDialog> {
     );
   }
 
+  String _formatRoomType(String roomType) {
+    switch (roomType.toUpperCase()) {
+      case 'TWO_D':
+        return '2D';
+      case 'THREE_D':
+        return '3D';
+      case 'IMAX':
+        return 'IMAX';
+      case 'EXTREME':
+        return 'EXTREME';
+      case 'VIP':
+        return 'VIP';
+      default:
+        return roomType;
+    }
+  }
+
   Widget _buildSessionCard(BuildContext context, Session session) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: AppColors.primary.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
       child: InkWell(
         onTap: () => widget.onSessionSelected(session.id),
         borderRadius: BorderRadius.circular(12),
@@ -172,18 +196,6 @@ class _SessionSelectionDialogState extends State<SessionSelectionDialog> {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              // Movie poster placeholder
-              Container(
-                width: 60,
-                height: 90,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.movie, size: 32),
-              ),
-              const SizedBox(width: 16),
-
               // Session details
               Expanded(
                 child: Column(
@@ -223,10 +235,35 @@ class _SessionSelectionDialogState extends State<SessionSelectionDialog> {
                         Icon(Icons.meeting_room, size: 16, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Text(
-                          session.roomName,
-                          style: AppTextStyles.bodySmall,
+                          'Sala ${session.roomName}',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: Colors.grey[600],
+                          ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                              color: AppColors.primary,
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            _formatRoomType(session.format),
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
                         Icon(Icons.event_seat, size: 16, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Text(

@@ -88,14 +88,21 @@ class MoviesTab extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.all(16),
-          color: AppColors.surface,
+          color: AppColors.background,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '${movies.length} filmes',
-                style: AppTextStyles.bodyLarge.copyWith(
-                  fontWeight: FontWeight.bold,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.grayCurtain,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  '${movies.length} filmes',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               ElevatedButton.icon(
@@ -137,25 +144,6 @@ class MoviesTab extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              // Movie poster placeholder
-              Container(
-                width: 60,
-                height: 90,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                  image: movie.posterUrl != null
-                      ? DecorationImage(
-                          image: NetworkImage(movie.posterUrl!),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
-                ),
-                child: movie.posterUrl == null
-                    ? const Icon(Icons.movie, size: 32)
-                    : null,
-              ),
-              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

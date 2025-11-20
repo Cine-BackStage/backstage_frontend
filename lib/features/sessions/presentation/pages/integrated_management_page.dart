@@ -72,11 +72,11 @@ class _IntegratedManagementPageState extends State<IntegratedManagementPage>
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Gerenciamento'),
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.background,
           elevation: 0,
           bottom: TabBar(
             controller: _tabController,
-            indicatorColor: Colors.white,
+            indicatorColor: AppColors.orangeSpotlight,
             indicatorWeight: 3,
             labelStyle: AppTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.bold,

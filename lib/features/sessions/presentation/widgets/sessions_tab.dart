@@ -93,14 +93,21 @@ class SessionsTab extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.all(16),
-          color: AppColors.surface,
+          color: AppColors.background,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '${sessions.length} sessões',
-                style: AppTextStyles.bodyLarge.copyWith(
-                  fontWeight: FontWeight.bold,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.grayCurtain,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  '${sessions.length} sessões',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               ElevatedButton.icon(
@@ -130,10 +137,6 @@ class SessionsTab extends StatelessWidget {
 
   Widget _buildSessionCard(BuildContext context, Session session) {
     final availableSeats = session.availableSeats;
-    final occupancyPercentage = ((session.totalSeats - session.availableSeats) /
-            session.totalSeats *
-            100)
-        .round();
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -146,120 +149,82 @@ class SessionsTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              // Session details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      session.movieTitle,
+                      style: AppTextStyles.h3,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
                       children: [
+                        Icon(Icons.access_time,
+                            size: 16, color: Colors.grey[600]),
+                        const SizedBox(width: 4),
                         Text(
-                          session.movieTitle,
-                          style: AppTextStyles.h3,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(Icons.access_time,
-                                size: 16, color: Colors.grey[600]),
-                            const SizedBox(width: 4),
-                            Text(
-                              DateFormatter.dateTime(session.startTime),
-                              style: AppTextStyles.bodyMedium,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(Icons.meeting_room,
-                                size: 16, color: Colors.grey[600]),
-                            const SizedBox(width: 4),
-                            Text(
-                              session.roomName,
-                              style: AppTextStyles.bodyMedium,
-                            ),
-                          ],
+                          DateFormatter.dateTime(session.startTime),
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: Colors.grey[400],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _buildStatusBadge(session),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(occupancyPercentage)
-                              .withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '$occupancyPercentage%',
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: _getStatusColor(occupancyPercentage),
-                            fontWeight: FontWeight.bold,
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.meeting_room,
+                            size: 16, color: Colors.grey[600]),
+                        const SizedBox(width: 4),
+                        Text(
+                          session.roomName,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: Colors.grey[400],
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Icon(Icons.event_seat, size: 16, color: Colors.grey[600]),
-                  const SizedBox(width: 4),
-                  Text(
-                    '$availableSeats de ${session.totalSeats} assentos disponíveis',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: availableSeats < 10
-                          ? AppColors.alertWarning
-                          : null,
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: (session.totalSeats - session.availableSeats) /
-                      session.totalSeats,
-                  backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    _getStatusColor(occupancyPercentage),
-                  ),
-                  minHeight: 6,
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.event_seat,
+                            size: 16, color: Colors.grey[600]),
+                        const SizedBox(width: 4),
+                        Text(
+                          '$availableSeats assentos disponíveis',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: availableSeats < 10
+                                ? AppColors.alertWarning
+                                : Colors.grey[400],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    _buildStatusBadge(session),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              // Action buttons
+              Column(
                 children: [
-                  TextButton.icon(
+                  IconButton(
                     onPressed: () => _showSessionDialog(context, session: session),
-                    icon: const Icon(Icons.edit, size: 18),
-                    label: const Text('Editar'),
+                    icon: const Icon(Icons.edit, size: 20),
+                    color: AppColors.primary,
+                    tooltip: 'Editar',
                   ),
-                  const SizedBox(width: 8),
-                  TextButton.icon(
+                  IconButton(
                     onPressed: () => _confirmDelete(context, session),
-                    icon: const Icon(Icons.delete, size: 18),
-                    label: const Text('Excluir'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColors.error,
-                    ),
+                    icon: const Icon(Icons.delete, size: 20),
+                    color: AppColors.error,
+                    tooltip: 'Excluir',
                   ),
                 ],
               ),
@@ -319,12 +284,6 @@ class SessionsTab extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Color _getStatusColor(int percentage) {
-    if (percentage >= 90) return AppColors.error;
-    if (percentage >= 70) return AppColors.alertWarning;
-    return AppColors.success;
   }
 
   Widget _buildErrorView(BuildContext context, String message) {

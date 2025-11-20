@@ -15,6 +15,23 @@ class SessionCard extends StatelessWidget {
     required this.onTap,
   });
 
+  String _formatRoomType(String roomType) {
+    switch (roomType.toUpperCase()) {
+      case 'TWO_D':
+        return '2D';
+      case 'THREE_D':
+        return '3D';
+      case 'IMAX':
+        return 'IMAX';
+      case 'EXTREME':
+        return 'EXTREME';
+      case 'VIP':
+        return 'VIP';
+      default:
+        return roomType;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -27,39 +44,16 @@ class SessionCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Movie title and format
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      session.movieTitle,
-                      style: AppTextStyles.h3,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      session.format,
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+              // Movie title
+              Text(
+                session.movieTitle,
+                style: AppTextStyles.h3,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 8),
 
-              // Time and room
+              // Time
               Row(
                 children: [
                   Icon(
@@ -74,7 +68,13 @@ class SessionCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                ],
+              ),
+              const SizedBox(height: 8),
+
+              // Room and type
+              Row(
+                children: [
                   Icon(
                     Icons.meeting_room,
                     size: 16,
@@ -82,8 +82,16 @@ class SessionCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    session.roomName,
+                    'Sala ${session.roomName}',
                     style: AppTextStyles.bodyMedium,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '• ${_formatRoomType(session.format)}',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
