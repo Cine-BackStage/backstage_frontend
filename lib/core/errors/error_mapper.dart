@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'exceptions.dart';
 import 'failures.dart';
 
 /// Maps Dio exceptions and API errors to specific Failure types
@@ -168,6 +169,13 @@ class ErrorMapper {
   static Failure fromException(dynamic error) {
     if (error is DioException) {
       return fromDioException(error);
+    }
+
+    if (error is AppException) {
+      return GenericFailure(
+        message: error.message,
+        statusCode: error.statusCode,
+      );
     }
 
     if (error is TypeError || error is FormatException) {

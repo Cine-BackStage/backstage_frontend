@@ -18,10 +18,10 @@ class SalesSummaryModel extends SalesSummary {
     // Check if data is nested or flat structure
     if (json.containsKey('today')) {
       // Nested structure
-      final today = json['today'] as Map<String, dynamic>? ?? {};
-      final week = json['week'] as Map<String, dynamic>? ?? {};
-      final month = json['month'] as Map<String, dynamic>? ?? {};
-      final lastMonth = json['lastMonth'] as Map<String, dynamic>? ?? {};
+      final today = json['today'] != null ? Map<String, dynamic>.from(json['today'] as Map) : <String, dynamic>{};
+      final week = json['week'] != null ? Map<String, dynamic>.from(json['week'] as Map) : <String, dynamic>{};
+      final month = json['month'] != null ? Map<String, dynamic>.from(json['month'] as Map) : <String, dynamic>{};
+      final lastMonth = json['lastMonth'] != null ? Map<String, dynamic>.from(json['lastMonth'] as Map) : <String, dynamic>{};
 
       return SalesSummaryModel(
         todayRevenue: (today['revenue'] ?? 0).toDouble(),
