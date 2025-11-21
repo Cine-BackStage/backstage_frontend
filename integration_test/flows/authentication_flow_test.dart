@@ -256,7 +256,7 @@ void main() {
       await tester.pump();
 
       // Find the password field
-      final passwordField = tester.widget<TextField>(
+      final passwordField = tester.widget<TextFormField>(
         find.byKey(const Key('passwordField')),
       );
 
@@ -272,7 +272,7 @@ void main() {
       await tester.pump();
 
       // Get the updated password field
-      final updatedPasswordField = tester.widget<TextField>(
+      final updatedPasswordField = tester.widget<TextFormField>(
         find.byKey(const Key('passwordField')),
       );
 
