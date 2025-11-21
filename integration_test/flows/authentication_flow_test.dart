@@ -255,10 +255,12 @@ void main() {
       );
       await tester.pump();
 
-      // Find the password field
-      final passwordField = tester.widget<TextFormField>(
-        find.byKey(const Key('passwordField')),
+      // Find the TextField inside the TextFormField
+      final passwordFieldFinder = find.descendant(
+        of: find.byKey(const Key('passwordField')),
+        matching: find.byType(TextField),
       );
+      final passwordField = tester.widget<TextField>(passwordFieldFinder);
 
       // Verify password is obscured initially
       expect(passwordField.obscureText, isTrue);
@@ -272,9 +274,7 @@ void main() {
       await tester.pump();
 
       // Get the updated password field
-      final updatedPasswordField = tester.widget<TextFormField>(
-        find.byKey(const Key('passwordField')),
-      );
+      final updatedPasswordField = tester.widget<TextField>(passwordFieldFinder);
 
       // Verify password is now visible
       expect(updatedPasswordField.obscureText, isFalse);
