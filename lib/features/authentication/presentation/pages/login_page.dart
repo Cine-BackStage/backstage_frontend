@@ -92,7 +92,9 @@ class LoginView extends StatelessWidget {
                     if (state is AuthLoading) ...[
                       const SizedBox(height: 24),
                       const Center(
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator(
+                          key: Key('loginLoadingIndicator'),
+                        ),
                       ),
                     ],
                   ],

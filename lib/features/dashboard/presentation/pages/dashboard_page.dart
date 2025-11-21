@@ -88,6 +88,7 @@ class DashboardPage extends StatelessWidget {
                 },
               ),
               IconButton(
+                key: const Key('profileButton'),
                 icon: const Icon(Icons.person_outline),
                 onPressed: () {
                   Navigator.of(context).pushNamed(AppRoutes.profile);
@@ -95,6 +96,7 @@ class DashboardPage extends StatelessWidget {
                 tooltip: 'Perfil',
               ),
               IconButton(
+                key: const Key('logoutButton'),
                 icon: const Icon(Icons.logout),
                 onPressed: () {
                   context.read<AuthBloc>().add(const LogoutRequested());

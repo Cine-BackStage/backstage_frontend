@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'service_locator.dart';
 import '../../core/navigation/navigation_manager.dart';
 import '../../adapters/storage/local_storage.dart';
@@ -16,16 +17,16 @@ import '../../features/reports/di/reports_injection_container.dart';
 /// Central Dependency Injection Container
 /// Coordinates all module injection containers and core services
 class InjectionContainer {
-  static Future<void> init() async {
+  static Future<void> init({Dio? dioForTesting}) async {
     // Core Services
-    await _initCore();
+    await _initCore(dioForTesting: dioForTesting);
 
     // Feature Modules
     await _initFeatures();
   }
 
   /// Initialize core services
-  static Future<void> _initCore() async {
+  static Future<void> _initCore({Dio? dioForTesting}) async {
     // Storage (must be first as HttpClient depends on it)
     final storage = await LocalStorage.getInstance();
     serviceLocator.registerSingleton<LocalStorage>(storage);
@@ -38,12 +39,24 @@ class InjectionContainer {
     print('🔗 API Base URL: $baseUrl');
 
     // HTTP Client with auth interceptor
-    serviceLocator.registerSingleton<HttpClient>(
-      HttpClient(
-        storage: storage,
-        baseUrl: baseUrl,
-      ),
-    );
+    // Use provided Dio for testing, otherwise create new instance
+    if (dioForTesting != null) {
+      print('🧪 Using mock Dio for testing');
+      serviceLocator.registerSingleton<HttpClient>(
+        HttpClient(
+          storage: storage,
+          baseUrl: baseUrl,
+          dioInstance: dioForTesting,
+        ),
+      );
+    } else {
+      serviceLocator.registerSingleton<HttpClient>(
+        HttpClient(
+          storage: storage,
+          baseUrl: baseUrl,
+        ),
+      );
+    }
 
   }
 

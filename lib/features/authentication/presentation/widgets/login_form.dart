@@ -46,6 +46,7 @@ class _LoginFormState extends State<LoginForm> {
         children: [
           // Employee ID field
           TextFormField(
+            key: const Key('employeeIdField'),
             controller: _employeeIdController,
             decoration: InputDecoration(
               labelText: 'ID do Funcionário',
@@ -64,6 +65,7 @@ class _LoginFormState extends State<LoginForm> {
 
           // Password field
           TextFormField(
+            key: const Key('passwordField'),
             controller: _passwordController,
             decoration: InputDecoration(
               labelText: 'Senha',
@@ -97,6 +99,7 @@ class _LoginFormState extends State<LoginForm> {
               final isLoading = state is AuthLoading;
 
               return FilledButton(
+                key: const Key('loginButton'),
                 onPressed: isLoading ? null : _handleLogin,
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),

@@ -10,18 +10,25 @@ class HttpClient {
   HttpClient({
     required LocalStorage storage,
     String baseUrl = 'http://localhost:3000',
+    Dio? dioInstance,
   }) : _storage = storage {
-    _dio = Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      ),
-    );
+    if (dioInstance != null) {
+      // Use provided Dio instance (for testing)
+      _dio = dioInstance;
+    } else {
+      // Create new Dio instance (for production)
+      _dio = Dio(
+        BaseOptions(
+          baseUrl: baseUrl,
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+    }
 
     _setupInterceptors();
   }
