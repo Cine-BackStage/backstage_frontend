@@ -142,6 +142,7 @@ class _RoomFormDialogState extends State<RoomFormDialog> {
                     children: [
                       // Name (required)
                       TextFormField(
+                        key: const Key('roomNameField'),
                         controller: _nameController,
                         decoration: const InputDecoration(
                           labelText: 'Nome da Sala *',
@@ -172,6 +173,7 @@ class _RoomFormDialogState extends State<RoomFormDialog> {
                           final isSelected = _selectedRoomType == type;
                           final color = _getRoomTypeColor(type);
                           return ChoiceChip(
+                            key: Key('roomType_${type.value}'),
                             label: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -243,6 +245,7 @@ class _RoomFormDialogState extends State<RoomFormDialog> {
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton(
+                    key: const Key('saveRoomButton'),
                     onPressed: _submit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,

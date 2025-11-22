@@ -149,6 +149,7 @@ class _MovieFormDialogState extends State<MovieFormDialog> {
                     children: [
                       // Title (required)
                       TextFormField(
+                        key: const Key('movieTitleField'),
                         controller: _titleController,
                         decoration: const InputDecoration(
                           labelText: 'Título *',
@@ -169,6 +170,7 @@ class _MovieFormDialogState extends State<MovieFormDialog> {
                         children: [
                           Expanded(
                             child: TextFormField(
+                              key: const Key('movieDurationField'),
                               controller: _durationController,
                               decoration: const InputDecoration(
                                 labelText: 'Duração (min) *',
@@ -194,6 +196,7 @@ class _MovieFormDialogState extends State<MovieFormDialog> {
                           const SizedBox(width: 16),
                           Expanded(
                             child: TextFormField(
+                              key: const Key('movieGenreField'),
                               controller: _genreController,
                               decoration: const InputDecoration(
                                 labelText: 'Gênero *',
@@ -214,6 +217,7 @@ class _MovieFormDialogState extends State<MovieFormDialog> {
 
                       // Rating Dropdown
                       DropdownButtonFormField<String>(
+                        key: const Key('movieRatingDropdown'),
                         value: _selectedRating,
                         decoration: const InputDecoration(
                           labelText: 'Classificação *',
@@ -302,6 +306,7 @@ class _MovieFormDialogState extends State<MovieFormDialog> {
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton(
+                    key: const Key('saveMovieButton'),
                     onPressed: _submit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
