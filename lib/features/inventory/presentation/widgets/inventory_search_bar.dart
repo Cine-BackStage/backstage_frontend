@@ -98,6 +98,7 @@ class _InventorySearchBarState extends State<InventorySearchBar> {
         child: Column(
           children: [
             TextField(
+              key: const Key('inventorySearchField'),
               controller: _searchController,
               focusNode: _focusNode,
               onChanged: _onSearchChanged,
@@ -135,6 +136,7 @@ class _InventorySearchBarState extends State<InventorySearchBar> {
             Row(
               children: [
                 GestureDetector(
+                  key: const Key('lowStockFilterButton'),
                   onTap: _toggleLowStockFilter,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -165,6 +167,7 @@ class _InventorySearchBarState extends State<InventorySearchBar> {
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
+                  key: const Key('expiringSoonFilterButton'),
                   onTap: _toggleExpiringSoonFilter,
                   child: Container(
                     padding: const EdgeInsets.symmetric(

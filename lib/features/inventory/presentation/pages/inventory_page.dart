@@ -34,6 +34,7 @@ class InventoryView extends StatelessWidget {
         surfaceTintColor: Colors.transparent,
         actions: [
           IconButton(
+            key: const Key('createProductButton'),
             icon: const Icon(Icons.add),
             onPressed: () async {
               final result = await Navigator.of(context).push(

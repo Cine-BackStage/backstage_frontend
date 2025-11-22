@@ -14,6 +14,7 @@ class InventoryProductList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      key: const Key('productList'),
       padding: const EdgeInsets.all(16),
       itemCount: products.length,
       itemBuilder: (context, index) {

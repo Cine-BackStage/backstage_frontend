@@ -66,12 +66,14 @@ class ProductItemCard extends StatelessWidget {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (statefulContext, setState) => AlertDialog(
+          key: const Key('adjustStockDialog'),
           title: const Text('Reestoque e Atualização'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
+                  key: const Key('adjustQuantityField'),
                   controller: quantityController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -154,6 +156,7 @@ class ProductItemCard extends StatelessWidget {
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
+              key: const Key('confirmAdjustmentButton'),
               onPressed: () {
                 final newQty = int.tryParse(quantityController.text);
                 final newPrice = double.tryParse(priceController.text);
@@ -201,6 +204,7 @@ class ProductItemCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        key: const Key('deleteProductDialog'),
         title: const Text('Excluir Produto'),
         content: Text(
           'Tem certeza que deseja excluir "${product.name}"?',
@@ -211,6 +215,7 @@ class ProductItemCard extends StatelessWidget {
             child: const Text('Cancelar'),
           ),
           ElevatedButton(
+            key: const Key('confirmDeleteProductButton'),
             onPressed: () {
               context.read<InventoryBloc>().add(
                     ToggleProductStatusRequested(
@@ -239,6 +244,7 @@ class ProductItemCard extends StatelessWidget {
     );
 
     return Card(
+      key: Key('product_${product.sku}'),
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: () {},
@@ -430,6 +436,7 @@ class ProductItemCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ElevatedButton(
+                      key: Key('adjustStockButton_${product.sku}'),
                       onPressed: () => _showRestockDialog(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
@@ -448,6 +455,7 @@ class ProductItemCard extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
+                      key: Key('deleteProductButton_${product.sku}'),
                       onPressed: () => _showDeleteDialog(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
