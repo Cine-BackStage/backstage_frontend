@@ -4,6 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:backstage_frontend/adapters/dependency_injection/injection_container.dart';
+import 'package:backstage_frontend/adapters/storage/local_storage.dart';
 import 'package:backstage_frontend/main.dart' as app;
 
 import '../mocks/mock_http_client.dart';
@@ -39,6 +40,10 @@ void main() {
 
       // Initialize dependencies with mocked Dio
       await InjectionContainer.init(dioForTesting: dio);
+
+      // Clear any stored authentication
+      final storage = GetIt.instance<LocalStorage>();
+      await storage.clear();
     });
 
     tearDown(() async {
@@ -835,4 +840,79 @@ void main() {
           reason: 'Quick action card should no longer be visible after navigation');
     });
   });
+}
+
+// Helper function to setup all dashboard mocks
+void _setupDashboardMocks(MockResponses mockResponses) {
+  mockResponses.addResponse(
+    'GET',
+    '/api/sales/reports/summary',
+    const MockResponse(
+      data: DashboardMockResponses.salesSummaryResponse,
+      statusCode: 200,
+    ),
+  );
+
+  mockResponses.addResponse(
+    'GET',
+    '/api/sessions',
+    const MockResponse(
+      data: DashboardMockResponses.sessionsResponse,
+      statusCode: 200,
+    ),
+  );
+
+  mockResponses.addResponse(
+    'GET',
+    '/api/inventory/alerts/low-stock',
+    const MockResponse(
+      data: DashboardMockResponses.lowStockResponse,
+      statusCode: 200,
+    ),
+  );
+
+  mockResponses.addResponse(
+    'GET',
+    '/api/inventory/expiring',
+    const MockResponse(
+      data: DashboardMockResponses.expiringItemsResponse,
+      statusCode: 200,
+    ),
+  );
+
+  mockResponses.addResponse(
+    'GET',
+    '/api/inventory',
+    const MockResponse(
+      data: DashboardMockResponses.inventoryResponse,
+      statusCode: 200,
+    ),
+  );
+
+  mockResponses.addResponse(
+    'GET',
+    '/api/customers',
+    const MockResponse(
+      data: DashboardMockResponses.customersResponse,
+      statusCode: 200,
+    ),
+  );
+
+  mockResponses.addResponse(
+    'GET',
+    '/api/movies',
+    const MockResponse(
+      data: PosMockResponses.moviesResponse,
+      statusCode: 200,
+    ),
+  );
+
+  mockResponses.addResponse(
+    'GET',
+    '/api/rooms',
+    const MockResponse(
+      data: PosMockResponses.roomsResponse,
+      statusCode: 200,
+    ),
+  );
 }

@@ -141,7 +141,36 @@ class DashboardMockResponses {
 
   static const inventoryResponse = {
     'success': true,
-    'data': []
+    'data': [
+      {
+        'sku': 'POPCORN-L',
+        'name': 'Pipoca Grande',
+        'description': 'Pipoca grande com manteiga',
+        'category': 'FOOD',
+        'unitPrice': 18.0,
+        'costPrice': 5.5,
+        'qtyOnHand': 50,
+        'minStock': 10,
+        'maxStock': 100,
+        'isActive': true,
+        'unit': 'UNIT',
+        'imageUrl': null
+      },
+      {
+        'sku': 'SODA-500',
+        'name': 'Refrigerante 500ml',
+        'description': 'Refrigerante 500ml variados',
+        'category': 'BEVERAGE',
+        'unitPrice': 8.0,
+        'costPrice': 2.5,
+        'qtyOnHand': 80,
+        'minStock': 20,
+        'maxStock': 150,
+        'isActive': true,
+        'unit': 'UNIT',
+        'imageUrl': null
+      }
+    ]
   };
 
   static const customersResponse = {
