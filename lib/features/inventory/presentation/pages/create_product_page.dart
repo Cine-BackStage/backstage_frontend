@@ -101,6 +101,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   TextFormField(
+                    key: const Key('productSkuField'),
                     controller: _skuController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
@@ -120,6 +121,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    key: const Key('productNameField'),
                     controller: _nameController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
@@ -139,6 +141,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    key: const Key('productPriceField'),
                     controller: _priceController,
                     style: const TextStyle(color: Colors.white),
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -167,6 +170,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    key: const Key('productCategoryField'),
                     controller: _categoryController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
@@ -186,6 +190,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    key: const Key('productQuantityField'),
                     controller: _quantityController,
                     style: const TextStyle(color: Colors.white),
                     keyboardType: TextInputType.number,
@@ -241,6 +246,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    key: const Key('productBarcodeField'),
                     controller: _barcodeController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
@@ -258,6 +264,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
                       final isLoading = state is InventoryLoading;
 
                       return ElevatedButton(
+                        key: const Key('submitProductButton'),
                         onPressed: isLoading ? null : () => _createProduct(context),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
