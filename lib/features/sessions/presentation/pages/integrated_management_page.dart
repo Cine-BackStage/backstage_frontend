@@ -84,14 +84,17 @@ class _IntegratedManagementPageState extends State<IntegratedManagementPage>
             unselectedLabelStyle: AppTextStyles.bodyMedium,
             tabs: const [
               Tab(
+                key: Key('sessionsTab'),
                 icon: Icon(Icons.movie_filter),
                 text: 'Sessões',
               ),
               Tab(
+                key: Key('moviesTab'),
                 icon: Icon(Icons.movie),
                 text: 'Filmes',
               ),
               Tab(
+                key: Key('roomsTab'),
                 icon: Icon(Icons.meeting_room),
                 text: 'Salas',
               ),

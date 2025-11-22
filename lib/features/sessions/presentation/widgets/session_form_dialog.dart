@@ -259,6 +259,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                                 .where((movie) => movie.isActive)
                                 .toList();
                             return DropdownButtonFormField<String>(
+                              key: const Key('movieDropdown'),
                               value: _selectedMovieId,
                               decoration: const InputDecoration(
                                 hintText: 'Selecione um filme',
@@ -308,6 +309,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                                 .where((room) => room.isActive)
                                 .toList();
                             return DropdownButtonFormField<String>(
+                              key: const Key('roomDropdown'),
                               value: _selectedRoomId,
                               decoration: const InputDecoration(
                                 hintText: 'Selecione uma sala',
@@ -357,6 +359,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                                 ),
                                 const SizedBox(height: 8),
                                 InkWell(
+                                  key: const Key('dateField'),
                                   onTap: _selectDate,
                                   child: InputDecorator(
                                     decoration: const InputDecoration(
@@ -386,6 +389,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                                 ),
                                 const SizedBox(height: 8),
                                 InkWell(
+                                  key: const Key('timeField'),
                                   onTap: _selectTime,
                                   child: InputDecorator(
                                     decoration: const InputDecoration(
@@ -421,11 +425,13 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
+                    key: const Key('cancelSessionButton'),
                     onPressed: () => Navigator.of(context).pop(),
                     child: const Text('Cancelar'),
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton(
+                    key: const Key('saveSessionButton'),
                     onPressed: _submit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,

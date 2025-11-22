@@ -400,6 +400,87 @@ class PosMockResponses {
     }
   };
 
+  // POST /api/sessions - Create new session
+  static const createSessionResponse = {
+    'success': true,
+    'data': {
+      'id': 'session-uuid-new',
+      'movieId': 'movie-uuid-1',
+      'movieTitle': 'Inception',
+      'roomId': 'room-uuid-1',
+      'roomName': 'Sala 1',
+      'startTime': '2025-12-16T20:00:00Z',
+      'endTime': '2025-12-16T22:28:00Z',
+      'language': 'Português',
+      'subtitles': 'Inglês',
+      'format': '2D',
+      'basePrice': 35.00,
+      'totalSeats': 100,
+      'availableSeats': 100,
+      'status': 'SCHEDULED'
+    }
+  };
+
+  // PUT /api/sessions/{sessionId} - Update session
+  static const updateSessionResponse = {
+    'success': true,
+    'data': {
+      'id': 'session-uuid-1',
+      'startTime': '2025-12-15T15:00:00Z',
+      'status': 'SCHEDULED'
+    }
+  };
+
+  // DELETE /api/sessions/{sessionId} - Delete session
+  static const deleteSessionResponse = {
+    'success': true,
+    'message': 'Sessão deletada com sucesso'
+  };
+
+  // GET /api/movies - Get movies list
+  static const moviesResponse = {
+    'success': true,
+    'data': [
+      {
+        'id': 'movie-uuid-1',
+        'title': 'Inception',
+        'durationMin': 148,
+        'genre': 'Sci-Fi',
+        'rating': 'PG-13',
+        'isActive': true
+      },
+      {
+        'id': 'movie-uuid-2',
+        'title': 'The Matrix',
+        'durationMin': 136,
+        'genre': 'Sci-Fi',
+        'rating': 'R',
+        'isActive': true
+      }
+    ]
+  };
+
+  // GET /api/rooms - Get rooms list
+  static const roomsResponse = {
+    'success': true,
+    'data': [
+      {
+        'id': 'room-uuid-1',
+        'name': 'Sala 1',
+        'capacity': 100,
+        'roomType': 'STANDARD',
+        'isActive': true
+      },
+      {
+        'id': 'room-uuid-2',
+        'name': 'Sala 2',
+        'capacity': 150,
+        'roomType': 'PREMIUM',
+        'isActive': true
+      }
+    ]
+  };
+
   // GET /api/sales/{saleId} - Get sale details
   static getSaleResponse(String saleId, {
     List items = const [],

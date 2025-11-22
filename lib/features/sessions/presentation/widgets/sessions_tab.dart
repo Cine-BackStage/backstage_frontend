@@ -73,6 +73,7 @@ class SessionsTab extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
+              key: const Key('createSessionButton'),
               onPressed: () => _showSessionDialog(context),
               icon: const Icon(Icons.add),
               label: const Text('Criar Nova Sessão'),
@@ -111,6 +112,7 @@ class SessionsTab extends StatelessWidget {
                 ),
               ),
               ElevatedButton.icon(
+                key: const Key('createSessionButton'),
                 onPressed: () => _showSessionDialog(context),
                 icon: const Icon(Icons.add, size: 18),
                 label: const Text('Nova Sessão'),
@@ -123,6 +125,7 @@ class SessionsTab extends StatelessWidget {
         ),
         Expanded(
           child: ListView.builder(
+            key: const Key('sessionsList'),
             padding: const EdgeInsets.all(16),
             itemCount: sessions.length,
             itemBuilder: (context, index) {
@@ -139,6 +142,7 @@ class SessionsTab extends StatelessWidget {
     final availableSeats = session.availableSeats;
 
     return Card(
+      key: Key('session_${session.id}'),
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -215,12 +219,14 @@ class SessionsTab extends StatelessWidget {
               Column(
                 children: [
                   IconButton(
+                    key: Key('editSession_${session.id}'),
                     onPressed: () => _showSessionDialog(context, session: session),
                     icon: const Icon(Icons.edit, size: 20),
                     color: AppColors.primary,
                     tooltip: 'Editar',
                   ),
                   IconButton(
+                    key: Key('deleteSession_${session.id}'),
                     onPressed: () => _confirmDelete(context, session),
                     icon: const Icon(Icons.delete, size: 20),
                     color: AppColors.error,
@@ -334,6 +340,7 @@ class SessionsTab extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        key: const Key('deleteConfirmDialog'),
         title: const Text('Confirmar Exclusão'),
         content: Text(
           'Deseja realmente excluir a sessão "${session.movieTitle}" em ${DateFormatter.dateTime(session.startTime)}?',
@@ -344,6 +351,7 @@ class SessionsTab extends StatelessWidget {
             child: const Text('Cancelar'),
           ),
           TextButton(
+            key: const Key('confirmDeleteButton'),
             onPressed: () {
               Navigator.of(dialogContext).pop();
               context
