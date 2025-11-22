@@ -78,6 +78,7 @@ class DashboardPage extends StatelessWidget {
                     isLabelVisible: alertCount > 0,
                     label: Text('$alertCount'),
                     child: IconButton(
+                      key: const Key('alertsButton'),
                       icon: const Icon(Icons.notifications_outlined),
                       onPressed: () {
                         Navigator.of(context).pushNamed(AppRoutes.alerts);
@@ -126,6 +127,7 @@ class _DashboardBody extends StatelessWidget {
         final employee = authState.employee;
 
         return RefreshIndicator(
+          key: const Key('dashboardRefreshIndicator'),
           onRefresh: () async {
             context.read<DashboardBloc>().add(const RefreshDashboard());
             await Future.delayed(const Duration(seconds: 1));
@@ -133,8 +135,16 @@ class _DashboardBody extends StatelessWidget {
           child: BlocBuilder<DashboardBloc, DashboardState>(
             builder: (context, dashboardState) {
               return dashboardState.when(
-                initial: () => const Center(child: CircularProgressIndicator()),
-                loading: () => const Center(child: CircularProgressIndicator()),
+                initial: () => const Center(
+                  child: CircularProgressIndicator(
+                    key: Key('dashboardLoadingIndicator'),
+                  ),
+                ),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(
+                    key: Key('dashboardLoadingIndicator'),
+                  ),
+                ),
                 loaded: (stats) => _buildDashboardContent(
                   context,
                   employee: employee,
@@ -168,6 +178,7 @@ class _DashboardBody extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton.icon(
+                        key: const Key('retryLoadButton'),
                         onPressed: () {
                           context.read<DashboardBloc>().add(
                             const LoadDashboardStats(),
@@ -234,6 +245,7 @@ class _DashboardBody extends StatelessWidget {
                   childAspectRatio: 1.5,
                   children: [
                     StatsCard(
+                      key: const Key('salesRevenueCard'),
                       title: 'Vendas Hoje',
                       value: CurrencyFormatter.format(
                         stats.salesSummary.todayRevenue,
@@ -244,12 +256,14 @@ class _DashboardBody extends StatelessWidget {
                           '${stats.salesSummary.todayTransactions} transações',
                     ),
                     StatsCard(
+                      key: const Key('sessionsCard'),
                       title: 'Sessões Hoje',
                       value: '${stats.sessionSummary.totalSessionsToday}',
                       icon: Icons.play_circle,
                       iconColor: Colors.blue,
                     ),
                     StatsCard(
+                      key: const Key('lowStockCard'),
                       title: 'Itens Baixo Estoque',
                       value: '${stats.inventorySummary.lowStockItems}',
                       icon: Icons.inventory_2,
@@ -279,6 +293,7 @@ class _DashboardBody extends StatelessWidget {
                   childAspectRatio: 1.2,
                   children: [
                     QuickActionCard(
+                      key: const Key('posQuickAction'),
                       title: 'Nova Venda',
                       description: 'Iniciar PDV',
                       icon: Icons.point_of_sale,
@@ -288,6 +303,7 @@ class _DashboardBody extends StatelessWidget {
                       },
                     ),
                     QuickActionCard(
+                      key: const Key('sessionsQuickAction'),
                       title: 'Sessões',
                       description: 'Ver programação',
                       icon: Icons.movie,
@@ -297,6 +313,7 @@ class _DashboardBody extends StatelessWidget {
                       },
                     ),
                     QuickActionCard(
+                      key: const Key('inventoryQuickAction'),
                       title: 'Inventário',
                       description: 'Gerenciar estoque',
                       icon: Icons.inventory,
@@ -306,6 +323,7 @@ class _DashboardBody extends StatelessWidget {
                       },
                     ),
                     QuickActionCard(
+                      key: const Key('reportsQuickAction'),
                       title: 'Relatórios',
                       description: 'Ver análises',
                       icon: Icons.analytics,
