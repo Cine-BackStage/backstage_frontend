@@ -17,6 +17,7 @@ class SalesSummaryCard extends StatelessWidget {
     final percentFormat = NumberFormat.percentPattern('pt_BR');
 
     return Column(
+      key: const Key('salesSummaryCard'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -63,6 +64,7 @@ class SalesSummaryCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           currencyFormat.format(summary.todayRevenue),
+                          key: const Key('todayRevenueText'),
                           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue[700],
@@ -82,6 +84,7 @@ class SalesSummaryCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           '${summary.todayTransactions}',
+                          key: const Key('todayTransactionsText'),
                           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -123,6 +126,7 @@ class SalesSummaryCard extends StatelessWidget {
                       const SizedBox(height: 12),
                       Text(
                         currencyFormat.format(summary.weekRevenue),
+                        key: const Key('weekRevenueText'),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.green[700],
@@ -166,6 +170,7 @@ class SalesSummaryCard extends StatelessWidget {
                       const SizedBox(height: 12),
                       Text(
                         currencyFormat.format(summary.monthRevenue),
+                        key: const Key('monthRevenueText'),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.purple[700],
@@ -205,6 +210,7 @@ class SalesSummaryCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     'Crescimento vs mês anterior: ${summary.growthPercentage > 0 ? '+' : ''}${percentFormat.format(summary.growthPercentage / 100)}',
+                    key: const Key('growthPercentageText'),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: summary.growthPercentage > 0 ? Colors.green[900] : Colors.red[900],
                           fontWeight: FontWeight.w600,

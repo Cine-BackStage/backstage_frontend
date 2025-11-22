@@ -66,6 +66,7 @@ class _EmployeeReportPageState extends State<EmployeeReportPage> {
             padding: const EdgeInsets.all(16),
             color: Theme.of(context).colorScheme.surface,
             child: InkWell(
+              key: const Key('dateRangePicker'),
               onTap: _selectDateRange,
               child: Container(
                 padding: const EdgeInsets.all(12),
@@ -99,6 +100,7 @@ class _EmployeeReportPageState extends State<EmployeeReportPage> {
                     return RefreshIndicator(
                       onRefresh: () async => _loadReport(),
                       child: ListView(
+                        key: const Key('reportDataTable'),
                         padding: const EdgeInsets.all(16),
                         children: [
                           // Summary Card

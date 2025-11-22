@@ -98,6 +98,7 @@ class _ReportsDashboardPageState extends State<ReportsDashboardPage> {
 
               // Detailed Sales Report Card
               _ReportCard(
+                key: const Key('detailedSalesReportButton'),
                 title: 'Vendas Detalhadas',
                 description: 'Análise detalhada de vendas por período',
                 icon: Icons.analytics,
@@ -110,6 +111,7 @@ class _ReportsDashboardPageState extends State<ReportsDashboardPage> {
 
               // Ticket Sales Report Card
               _ReportCard(
+                key: const Key('ticketSalesReportButton'),
                 title: 'Vendas de Ingressos',
                 description: 'Análise de vendas de ingressos por filme',
                 icon: Icons.confirmation_number,
@@ -122,6 +124,7 @@ class _ReportsDashboardPageState extends State<ReportsDashboardPage> {
 
               // Employee Report Card
               _ReportCard(
+                key: const Key('employeeReportButton'),
                 title: 'Desempenho de Funcionários',
                 description: 'Relatório de performance dos funcionários',
                 icon: Icons.people,
@@ -147,6 +150,7 @@ class _ReportCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const _ReportCard({
+    super.key,
     required this.title,
     required this.description,
     required this.icon,

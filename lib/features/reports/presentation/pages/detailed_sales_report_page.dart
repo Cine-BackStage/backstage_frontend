@@ -72,6 +72,7 @@ class _DetailedSalesReportPageState extends State<DetailedSalesReportPage> {
               children: [
                 // Date range selector
                 InkWell(
+                  key: const Key('dateRangePicker'),
                   onTap: _selectDateRange,
                   child: Container(
                     padding: const EdgeInsets.all(12),
@@ -97,6 +98,7 @@ class _DetailedSalesReportPageState extends State<DetailedSalesReportPage> {
 
                 // Group by selector
                 Row(
+                  key: const Key('groupByDropdown'),
                   children: [
                     Expanded(
                       child: _buildGroupByChip('day', 'Dia'),
@@ -125,6 +127,7 @@ class _DetailedSalesReportPageState extends State<DetailedSalesReportPage> {
                     return RefreshIndicator(
                       onRefresh: () async => _loadReport(),
                       child: ListView(
+                        key: const Key('reportDataTable'),
                         padding: const EdgeInsets.all(16),
                         children: [
                           // Summary Card
