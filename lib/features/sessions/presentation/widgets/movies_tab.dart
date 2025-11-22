@@ -68,6 +68,7 @@ class MoviesTab extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
+              key: const Key('createMovieButton'),
               onPressed: () => _showMovieDialog(context),
               icon: const Icon(Icons.add),
               label: const Text('Adicionar Filme'),
@@ -106,6 +107,7 @@ class MoviesTab extends StatelessWidget {
                 ),
               ),
               ElevatedButton.icon(
+                key: const Key('createMovieButton'),
                 onPressed: () => _showMovieDialog(context),
                 icon: const Icon(Icons.add, size: 18),
                 label: const Text('Novo Filme'),
@@ -132,6 +134,7 @@ class MoviesTab extends StatelessWidget {
 
   Widget _buildMovieCard(BuildContext context, Movie movie) {
     return Card(
+      key: Key('movie_${movie.id}'),
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -232,12 +235,14 @@ class MoviesTab extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
+                    key: Key('editMovie_${movie.id}'),
                     onPressed: () => _showMovieDialog(context, movie: movie),
                     icon: const Icon(Icons.edit),
                     color: AppColors.primary,
                     tooltip: 'Editar',
                   ),
                   IconButton(
+                    key: Key('deleteMovie_${movie.id}'),
                     onPressed: () => _confirmDelete(context, movie),
                     icon: const Icon(Icons.delete),
                     color: AppColors.error,
@@ -296,6 +301,7 @@ class MoviesTab extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        key: const Key('deleteMovieConfirmDialog'),
         title: const Text('Confirmar Exclusão'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -342,6 +348,7 @@ class MoviesTab extends StatelessWidget {
             child: const Text('Cancelar'),
           ),
           TextButton(
+            key: const Key('confirmDeleteMovieButton'),
             onPressed: () {
               Navigator.of(dialogContext).pop();
               context

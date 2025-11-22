@@ -68,6 +68,7 @@ class RoomsTab extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
+              key: const Key('createRoomButton'),
               onPressed: () => _showRoomDialog(context),
               icon: const Icon(Icons.add),
               label: const Text('Adicionar Sala'),
@@ -106,6 +107,7 @@ class RoomsTab extends StatelessWidget {
                 ),
               ),
               ElevatedButton.icon(
+                key: const Key('createRoomButton'),
                 onPressed: () => _showRoomDialog(context),
                 icon: const Icon(Icons.add, size: 18),
                 label: const Text('Nova Sala'),
@@ -132,6 +134,7 @@ class RoomsTab extends StatelessWidget {
 
   Widget _buildRoomCard(BuildContext context, Room room) {
     return Card(
+      key: Key('room_${room.id}'),
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -234,12 +237,14 @@ class RoomsTab extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
+                    key: Key('editRoom_${room.id}'),
                     onPressed: () => _showRoomDialog(context, room: room),
                     icon: const Icon(Icons.edit),
                     color: AppColors.primary,
                     tooltip: 'Editar',
                   ),
                   IconButton(
+                    key: Key('deleteRoom_${room.id}'),
                     onPressed: () => _confirmDelete(context, room),
                     icon: const Icon(Icons.delete),
                     color: AppColors.error,
@@ -323,6 +328,7 @@ class RoomsTab extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        key: const Key('deleteRoomConfirmDialog'),
         title: const Text('Confirmar Exclusão'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -369,6 +375,7 @@ class RoomsTab extends StatelessWidget {
             child: const Text('Cancelar'),
           ),
           TextButton(
+            key: const Key('confirmDeleteRoomButton'),
             onPressed: () {
               Navigator.of(dialogContext).pop();
               context
