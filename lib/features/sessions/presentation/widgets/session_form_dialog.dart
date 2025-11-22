@@ -14,10 +14,7 @@ import '../bloc/session_management_event.dart';
 class SessionFormDialog extends StatefulWidget {
   final Session? session; // null = create mode, not null = edit mode
 
-  const SessionFormDialog({
-    super.key,
-    this.session,
-  });
+  const SessionFormDialog({super.key, this.session});
 
   @override
   State<SessionFormDialog> createState() => _SessionFormDialogState();
@@ -55,7 +52,11 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final sessionDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+    final sessionDate = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+    );
 
     if (sessionDateTime.isBefore(now)) {
       return 'COMPLETED';
@@ -71,16 +72,16 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
     if (!_formKey.currentState!.validate()) return;
 
     if (_selectedMovieId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecione um filme')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Selecione um filme')));
       return;
     }
 
     if (_selectedRoomId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecione uma sala')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Selecione uma sala')));
       return;
     }
 
@@ -98,23 +99,23 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
     if (isEditMode) {
       // Update existing session
       context.read<SessionManagementBloc>().add(
-            UpdateSessionRequested(
-              sessionId: widget.session!.id,
-              movieId: _selectedMovieId,
-              roomId: _selectedRoomId,
-              startTime: startTime,
-              status: calculatedStatus,
-            ),
-          );
+        UpdateSessionRequested(
+          sessionId: widget.session!.id,
+          movieId: _selectedMovieId,
+          roomId: _selectedRoomId,
+          startTime: startTime,
+          status: calculatedStatus,
+        ),
+      );
     } else {
       // Create new session (backend will calculate base price from room type)
       context.read<SessionManagementBloc>().add(
-            CreateSessionRequested(
-              movieId: _selectedMovieId!,
-              roomId: _selectedRoomId!,
-              startTime: startTime,
-            ),
-          );
+        CreateSessionRequested(
+          movieId: _selectedMovieId!,
+          roomId: _selectedRoomId!,
+          startTime: startTime,
+        ),
+      );
     }
 
     Navigator.of(context).pop();
@@ -187,7 +188,10 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                             const Spacer(),
                             IconButton(
                               onPressed: () => Navigator.of(context).pop(),
-                              icon: const Icon(Icons.close, color: Colors.white),
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                              ),
                             ),
                           ],
                         ),
@@ -195,9 +199,7 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                       // Loading indicator
                       const Padding(
                         padding: EdgeInsets.all(100),
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                        child: Center(child: CircularProgressIndicator()),
                       ),
                     ],
                   );
@@ -211,8 +213,9 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                       padding: const EdgeInsets.all(20),
                       decoration: const BoxDecoration(
                         color: AppColors.primary,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(16)),
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(16),
+                        ),
                       ),
                       child: Row(
                         children: [
@@ -223,8 +226,9 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
                           const SizedBox(width: 12),
                           Text(
                             isEditMode ? 'Editar Sessão' : 'Nova Sessão',
-                            style:
-                                AppTextStyles.h2.copyWith(color: Colors.white),
+                            style: AppTextStyles.h2.copyWith(
+                              color: Colors.white,
+                            ),
                           ),
                           const Spacer(),
                           IconButton(
@@ -237,214 +241,230 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
 
                     // Form
                     Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Movie Selector
-                      Text(
-                        'Filme *',
-                        style: AppTextStyles.bodyLarge.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      BlocBuilder<MovieManagementBloc, MovieManagementState>(
-                        builder: (context, state) {
-                          if (state is MovieManagementLoaded) {
-                            final activeMovies = state.movies
-                                .where((movie) => movie.isActive)
-                                .toList();
-                            return DropdownButtonFormField<String>(
-                              key: const Key('movieDropdown'),
-                              value: _selectedMovieId,
-                              decoration: const InputDecoration(
-                                hintText: 'Selecione um filme',
-                                border: OutlineInputBorder(),
-                              ),
-                              items: activeMovies.map((movie) {
-                                return DropdownMenuItem(
-                                  value: movie.id,
-                                  child: Text(
-                                    '${movie.title} (${movie.durationMin}min)',
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedMovieId = value;
-                                });
-                              },
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Selecione um filme';
-                                }
-                                return null;
-                              },
-                            );
-                          }
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Room Selector
-                      Text(
-                        'Sala *',
-                        style: AppTextStyles.bodyLarge.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      BlocBuilder<RoomManagementBloc, RoomManagementState>(
-                        builder: (context, state) {
-                          if (state is RoomManagementLoaded) {
-                            final activeRooms = state.rooms
-                                .where((room) => room.isActive)
-                                .toList();
-                            return DropdownButtonFormField<String>(
-                              key: const Key('roomDropdown'),
-                              value: _selectedRoomId,
-                              decoration: const InputDecoration(
-                                hintText: 'Selecione uma sala',
-                                border: OutlineInputBorder(),
-                              ),
-                              items: activeRooms.map((room) {
-                                return DropdownMenuItem(
-                                  value: room.id,
-                                  child: Text(
-                                    '${room.name} - ${room.roomType.label} (${room.capacity} assentos)',
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedRoomId = value;
-                                });
-                              },
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Selecione uma sala';
-                                }
-                                return null;
-                              },
-                            );
-                          }
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Date and Time
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Data *',
-                                  style: AppTextStyles.bodyLarge.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(20),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Movie Selector
+                              Text(
+                                'Filme *',
+                                style: AppTextStyles.bodyLarge.copyWith(
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                const SizedBox(height: 8),
-                                InkWell(
-                                  key: const Key('dateField'),
-                                  onTap: _selectDate,
-                                  child: InputDecorator(
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      suffixIcon: Icon(Icons.calendar_today),
-                                    ),
-                                    child: Text(
-                                      DateFormat('dd/MM/yyyy')
-                                          .format(_selectedDate),
-                                      style: AppTextStyles.bodyMedium,
+                              ),
+                              const SizedBox(height: 8),
+                              BlocBuilder<
+                                MovieManagementBloc,
+                                MovieManagementState
+                              >(
+                                builder: (context, state) {
+                                  if (state is MovieManagementLoaded) {
+                                    final activeMovies = state.movies
+                                        .where((movie) => movie.isActive)
+                                        .toList();
+                                    return DropdownButtonFormField<String>(
+                                      key: const Key('movieDropdown'),
+                                      value: _selectedMovieId,
+                                      decoration: const InputDecoration(
+                                        hintText: 'Selecione um filme',
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      items: activeMovies.map((movie) {
+                                        return DropdownMenuItem(
+                                          value: movie.id,
+                                          child: Text(
+                                            '${movie.title} (${movie.durationMin}min)',
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedMovieId = value;
+                                        });
+                                      },
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return 'Selecione um filme';
+                                        }
+                                        return null;
+                                      },
+                                    );
+                                  }
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Room Selector
+                              Text(
+                                'Sala *',
+                                style: AppTextStyles.bodyLarge.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              BlocBuilder<
+                                RoomManagementBloc,
+                                RoomManagementState
+                              >(
+                                builder: (context, state) {
+                                  if (state is RoomManagementLoaded) {
+                                    final activeRooms = state.rooms
+                                        .where((room) => room.isActive)
+                                        .toList();
+                                    return DropdownButtonFormField<String>(
+                                      key: const Key('roomDropdown'),
+                                      value: _selectedRoomId,
+                                      decoration: const InputDecoration(
+                                        hintText: 'Selecione uma sala',
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      items: activeRooms.map((room) {
+                                        return DropdownMenuItem(
+                                          value: room.id,
+                                          child: Text(
+                                            '${room.name} - ${room.roomType.label} (${room.capacity} assentos)',
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedRoomId = value;
+                                        });
+                                      },
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return 'Selecione uma sala';
+                                        }
+                                        return null;
+                                      },
+                                    );
+                                  }
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Date and Time
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Data *',
+                                          style: AppTextStyles.bodyLarge
+                                              .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        InkWell(
+                                          key: const Key('dateField'),
+                                          onTap: _selectDate,
+                                          child: InputDecorator(
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              suffixIcon: Icon(
+                                                Icons.calendar_today,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              DateFormat(
+                                                'dd/MM/yyyy',
+                                              ).format(_selectedDate),
+                                              style: AppTextStyles.bodyMedium,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Hora *',
+                                          style: AppTextStyles.bodyLarge
+                                              .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        InkWell(
+                                          key: const Key('timeField'),
+                                          onTap: _selectTime,
+                                          child: InputDecorator(
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              suffixIcon: Icon(
+                                                Icons.access_time,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              _selectedTime.format(context),
+                                              style: AppTextStyles.bodyMedium,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Hora *',
-                                  style: AppTextStyles.bodyLarge.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                InkWell(
-                                  key: const Key('timeField'),
-                                  onTap: _selectTime,
-                                  child: InputDecorator(
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      suffixIcon: Icon(Icons.access_time),
-                                    ),
-                                    child: Text(
-                                      _selectedTime.format(context),
-                                      style: AppTextStyles.bodyMedium,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                        ),
+                      ),
+                    ),
+
+                    // Footer buttons
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF2C2C2C),
+                        borderRadius: BorderRadius.vertical(
+                          bottom: Radius.circular(16),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            key: const Key('cancelSessionButton'),
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cancelar'),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton(
+                            key: const Key('saveSessionButton'),
+                            onPressed: _submit,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
                             ),
+                            child: Text(isEditMode ? 'Salvar' : 'Criar'),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Footer buttons
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
-                color: Color(0xFF2C2C2C),
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(16)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    key: const Key('cancelSessionButton'),
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancelar'),
-                  ),
-                  const SizedBox(width: 12),
-                  ElevatedButton(
-                    key: const Key('saveSessionButton'),
-                    onPressed: _submit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
                     ),
-                    child: Text(isEditMode ? 'Salvar' : 'Criar'),
-                  ),
-                ],
-              ),
-            ),
                   ],
                 );
               },
@@ -454,5 +474,4 @@ class _SessionFormDialogState extends State<SessionFormDialog> {
       ),
     );
   }
-
 }
