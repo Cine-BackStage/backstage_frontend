@@ -31,6 +31,7 @@ class ShoppingCartPanel extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
+      key: const Key('shoppingCartPanel'),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: Border(
@@ -106,6 +107,7 @@ class ShoppingCartPanel extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = sale.items[index];
                       return ListTile(
+                        key: Key('cartItem_$index'),
                         title: Text(
                           item.description,
                           style: const TextStyle(fontWeight: FontWeight.w500),
@@ -124,6 +126,7 @@ class ShoppingCartPanel extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             IconButton(
+                              key: Key('removeCartItem_$index'),
                               icon: const Icon(Icons.delete_outline),
                               color: Colors.red,
                               onPressed: isProcessing
@@ -218,39 +221,67 @@ class ShoppingCartPanel extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 // Grand total
-                _buildTotalRow(
-                  'Total',
-                  sale.grandTotal,
-                  theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
-                  ),
+                Row(
+                  key: const Key('totalAmountText'),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Total', style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                    )),
+                    Text(
+                      'R\$ ${sale.grandTotal.toStringAsFixed(2)}',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
 
                 // Paid amount
                 if (sale.totalPaid > 0) ...[
-                  _buildTotalRow(
-                    'Pago',
-                    sale.totalPaid,
-                    theme.textTheme.bodyLarge?.copyWith(
-                      color: Colors.green,
-                    ),
+                  Row(
+                    key: const Key('paidAmountText'),
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Pago', style: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.green,
+                      )),
+                      Text(
+                        'R\$ ${sale.totalPaid.toStringAsFixed(2)}',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                 ],
 
                 // Remaining amount
                 if (sale.totalPaid > 0) ...[
-                  _buildTotalRow(
-                    'Restante',
-                    sale.grandTotal - sale.totalPaid,
-                    theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: sale.isPaymentComplete
-                          ? Colors.green
-                          : Colors.orange,
-                    ),
+                  Row(
+                    key: const Key('remainingAmountText'),
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Restante', style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: sale.isPaymentComplete
+                            ? Colors.green
+                            : Colors.orange,
+                      )),
+                      Text(
+                        'R\$ ${(sale.grandTotal - sale.totalPaid).toStringAsFixed(2)}',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: sale.isPaymentComplete
+                              ? Colors.green
+                              : Colors.orange,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -325,6 +356,7 @@ class ShoppingCartPanel extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
+                        key: const Key('applyDiscountButton'),
                         onPressed: onApplyDiscount,
                         icon: const Icon(Icons.local_offer),
                         label: const Text('Aplicar Desconto'),
@@ -343,6 +375,7 @@ class ShoppingCartPanel extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: FilledButton.icon(
+                        key: const Key('addPaymentButton'),
                         onPressed: onAddPayment,
                         icon: const Icon(Icons.payment),
                         label: Text(
@@ -364,6 +397,7 @@ class ShoppingCartPanel extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: FilledButton.icon(
+                        key: const Key('finalizeSaleButton'),
                         onPressed: onFinalizeSale,
                         icon: const Icon(Icons.check_circle),
                         label: const Text('Finalizar Venda'),
@@ -381,6 +415,7 @@ class ShoppingCartPanel extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(
+                      key: const Key('cancelSaleButton'),
                       onPressed: onCancelSale,
                       icon: const Icon(Icons.close),
                       label: const Text('Cancelar Venda'),

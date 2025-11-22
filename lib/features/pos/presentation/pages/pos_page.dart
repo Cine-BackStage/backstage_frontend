@@ -179,6 +179,7 @@ class PosPage extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
+            key: const Key('initializePosButton'),
             onPressed: () {
               context.read<PosBloc>().add(const LoadProducts());
             },
@@ -250,6 +251,7 @@ class PosPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton.icon(
+                        key: const Key('newSaleButton'),
                         onPressed: () {
                           context.read<PosBloc>().add(const CreateSale());
                         },
@@ -270,6 +272,7 @@ class PosPage extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
+                key: const Key('sellTicketsButton'),
                 onPressed: () => _showSessionSelectionDialog(context),
                 icon: const Icon(Icons.movie),
                 label: const Text('Vender Ingressos'),

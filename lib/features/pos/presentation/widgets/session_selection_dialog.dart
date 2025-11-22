@@ -172,6 +172,7 @@ class _SessionSelectionDialogState extends State<SessionSelectionDialog> {
 
   Widget _buildSessionCard(BuildContext context, Session session) {
     return Card(
+      key: Key('sessionCard_${session.id}'),
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),

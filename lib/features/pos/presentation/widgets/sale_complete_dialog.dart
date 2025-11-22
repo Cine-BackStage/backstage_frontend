@@ -19,6 +19,7 @@ class SaleCompleteDialog extends StatelessWidget {
     final theme = Theme.of(context);
 
     return AlertDialog(
+      key: const Key('saleCompleteDialog'),
       title: Row(
         children: [
           Icon(
@@ -51,6 +52,7 @@ class SaleCompleteDialog extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     '#${sale.id}',
+                    key: const Key('saleReceiptNumber'),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontFamily: 'monospace',
@@ -136,6 +138,7 @@ class SaleCompleteDialog extends StatelessWidget {
           child: const Text('Fechar'),
         ),
         FilledButton.icon(
+          key: const Key('newSaleFromDialogButton'),
           onPressed: onNewSale,
           icon: const Icon(Icons.add_shopping_cart),
           label: const Text('Nova Venda'),

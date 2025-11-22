@@ -162,6 +162,7 @@ class SeatSelectionPage extends StatelessWidget {
                                   ),
                                 ),
                                 ElevatedButton(
+                                  key: const Key('confirmSeatsButton'),
                                   onPressed: selectedSeats.isEmpty
                                       ? null
                                       : () {

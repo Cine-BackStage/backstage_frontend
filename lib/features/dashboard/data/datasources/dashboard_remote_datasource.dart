@@ -72,14 +72,11 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       }
     } catch (e, stackTrace) {
       logger.logDataSourceError('DashboardDataSource', '_getSalesSummary', e, stackTrace);
-      // Return empty data on error
-      return const SalesSummaryModel(
-        todayRevenue: 0.0,
-        todayTransactions: 0,
-        averageTicketPrice: 0.0,
-        weekRevenue: 0.0,
-        monthRevenue: 0.0,
-        growthPercentage: 0.0,
+      if (e is AppException) {
+        rethrow;
+      }
+      throw AppException(
+        message: 'Failed to get sales summary: ${e.toString()}',
       );
     }
   }
@@ -131,13 +128,11 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       }
     } catch (e, stackTrace) {
       logger.logDataSourceError('DashboardDataSource', '_getSessionSummary', e, stackTrace);
-      // Return empty data on error
-      return const SessionSummaryModel(
-        activeSessionsToday: 0,
-        upcomingSessions: 0,
-        totalSessionsToday: 0,
-        averageOccupancy: 0.0,
-        totalTicketsSold: 0,
+      if (e is AppException) {
+        rethrow;
+      }
+      throw AppException(
+        message: 'Failed to get session summary: ${e.toString()}',
       );
     }
   }
@@ -155,8 +150,11 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       final expiringResponse = await client.get(ApiConstants.inventoryExpiring);
       int expiringItems = 0;
       if (expiringResponse.data['success'] == true) {
-        final data = expiringResponse.data['data'] as Map<String, dynamic>?;
-        if (data != null) {
+        final data = expiringResponse.data['data'];
+        // Handle both formats: List or Map with expiringItems/expiredItems
+        if (data is List) {
+          expiringItems = data.length;
+        } else if (data is Map<String, dynamic>) {
           final expiringList = data['expiringItems'] as List? ?? [];
           final expiredList = data['expiredItems'] as List? ?? [];
           expiringItems = expiringList.length + expiredList.length;
@@ -197,13 +195,11 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       );
     } catch (e, stackTrace) {
       logger.logDataSourceError('DashboardDataSource', '_getInventorySummary', e, stackTrace);
-      // Return empty data on error
-      return const InventorySummaryModel(
-        lowStockItems: 0,
-        expiringItems: 0,
-        totalInventoryValue: 0.0,
-        totalItems: 0,
-        outOfStockItems: 0,
+      if (e is AppException) {
+        rethrow;
+      }
+      throw AppException(
+        message: 'Failed to get inventory summary: ${e.toString()}',
       );
     }
   }
@@ -223,7 +219,12 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       }
     } catch (e, stackTrace) {
       logger.logDataSourceError('DashboardDataSource', '_getActiveCustomers', e, stackTrace);
-      return 0;
+      if (e is AppException) {
+        rethrow;
+      }
+      throw AppException(
+        message: 'Failed to get customers: ${e.toString()}',
+      );
     }
   }
 }

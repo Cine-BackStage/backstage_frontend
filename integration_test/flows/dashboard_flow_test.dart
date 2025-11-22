@@ -531,5 +531,308 @@ void main() {
       expect(find.text('Nova Venda'), findsNothing,
           reason: 'Quick action should no longer be visible after navigation');
     });
+
+    testWidgets(
+        'Flow 2.6: Quick action navigates to correct page (Sessions example)',
+        (tester) async {
+      // Setup mock responses for login
+      mockResponses.addResponse(
+        'POST',
+        '/api/employees/login',
+        const MockResponse(
+          data: AuthMockResponses.successfulLoginResponse,
+          statusCode: 200,
+        ),
+      );
+
+      // Setup dashboard data
+      mockResponses.addResponse(
+        'GET',
+        '/api/sales/reports/summary',
+        const MockResponse(
+          data: DashboardMockResponses.salesSummaryResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/sessions',
+        const MockResponse(
+          data: DashboardMockResponses.sessionsResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/inventory/alerts/low-stock',
+        const MockResponse(
+          data: DashboardMockResponses.lowStockResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/inventory/expiring',
+        const MockResponse(
+          data: DashboardMockResponses.expiringItemsResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/inventory',
+        const MockResponse(
+          data: DashboardMockResponses.inventoryResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/customers',
+        const MockResponse(
+          data: DashboardMockResponses.customersResponse,
+          statusCode: 200,
+        ),
+      );
+
+      // Start app and login
+      await tester.pumpWidget(const app.BackstageApp());
+      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+
+      // Login
+      await tester.enterText(
+        find.byKey(const Key('employeeIdField')),
+        'EMP001',
+      );
+      await tester.enterText(
+        find.byKey(const Key('passwordField')),
+        'password123',
+      );
+      await tester.tap(find.byKey(const Key('loginButton')));
+      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+
+      // Wait for dashboard to load
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+
+      // Verify Sessions quick action is visible
+      expect(find.byKey(const Key('sessionsQuickAction')), findsOneWidget);
+
+      // Tap Sessions quick action
+      await tester.tap(find.byKey(const Key('sessionsQuickAction')));
+      await tester.pumpAndSettle();
+
+      // Verify we navigated away from dashboard by checking quick action card is gone
+      expect(find.byKey(const Key('sessionsQuickAction')), findsNothing,
+          reason: 'Quick action card should no longer be visible after navigation');
+    });
+
+    testWidgets(
+        'Flow 2.7: Quick action navigates to correct page (Inventory example)',
+        (tester) async {
+      // Setup mock responses for login
+      mockResponses.addResponse(
+        'POST',
+        '/api/employees/login',
+        const MockResponse(
+          data: AuthMockResponses.successfulLoginResponse,
+          statusCode: 200,
+        ),
+      );
+
+      // Setup dashboard data
+      mockResponses.addResponse(
+        'GET',
+        '/api/sales/reports/summary',
+        const MockResponse(
+          data: DashboardMockResponses.salesSummaryResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/sessions',
+        const MockResponse(
+          data: DashboardMockResponses.sessionsResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/inventory/alerts/low-stock',
+        const MockResponse(
+          data: DashboardMockResponses.lowStockResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/inventory/expiring',
+        const MockResponse(
+          data: DashboardMockResponses.expiringItemsResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/inventory',
+        const MockResponse(
+          data: DashboardMockResponses.inventoryResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/customers',
+        const MockResponse(
+          data: DashboardMockResponses.customersResponse,
+          statusCode: 200,
+        ),
+      );
+
+      // Start app and login
+      await tester.pumpWidget(const app.BackstageApp());
+      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+
+      // Login
+      await tester.enterText(
+        find.byKey(const Key('employeeIdField')),
+        'EMP001',
+      );
+      await tester.enterText(
+        find.byKey(const Key('passwordField')),
+        'password123',
+      );
+      await tester.tap(find.byKey(const Key('loginButton')));
+      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+
+      // Wait for dashboard to load
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+
+      // Verify Inventory quick action is visible
+      expect(find.byKey(const Key('inventoryQuickAction')), findsOneWidget);
+
+      // Tap Inventory quick action
+      await tester.tap(find.byKey(const Key('inventoryQuickAction')));
+      await tester.pumpAndSettle();
+
+      // Verify we navigated away from dashboard by checking quick action card is gone
+      expect(find.byKey(const Key('inventoryQuickAction')), findsNothing,
+          reason: 'Quick action card should no longer be visible after navigation');
+    });
+
+    testWidgets(
+        'Flow 2.8: Quick action navigates to correct page (Reports example)',
+        (tester) async {
+      // Setup mock responses for login
+      mockResponses.addResponse(
+        'POST',
+        '/api/employees/login',
+        const MockResponse(
+          data: AuthMockResponses.successfulLoginResponse,
+          statusCode: 200,
+        ),
+      );
+
+      // Setup dashboard data
+      mockResponses.addResponse(
+        'GET',
+        '/api/sales/reports/summary',
+        const MockResponse(
+          data: DashboardMockResponses.salesSummaryResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/sessions',
+        const MockResponse(
+          data: DashboardMockResponses.sessionsResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/inventory/alerts/low-stock',
+        const MockResponse(
+          data: DashboardMockResponses.lowStockResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/inventory/expiring',
+        const MockResponse(
+          data: DashboardMockResponses.expiringItemsResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/inventory',
+        const MockResponse(
+          data: DashboardMockResponses.inventoryResponse,
+          statusCode: 200,
+        ),
+      );
+
+      mockResponses.addResponse(
+        'GET',
+        '/api/customers',
+        const MockResponse(
+          data: DashboardMockResponses.customersResponse,
+          statusCode: 200,
+        ),
+      );
+
+      // Start app and login
+      await tester.pumpWidget(const app.BackstageApp());
+      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+
+      // Login
+      await tester.enterText(
+        find.byKey(const Key('employeeIdField')),
+        'EMP001',
+      );
+      await tester.enterText(
+        find.byKey(const Key('passwordField')),
+        'password123',
+      );
+      await tester.tap(find.byKey(const Key('loginButton')));
+      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+
+      // Wait for dashboard to load
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+
+      // Verify Reports quick action is visible
+      expect(find.byKey(const Key('reportsQuickAction')), findsOneWidget);
+
+      // Tap Reports quick action
+      await tester.tap(find.byKey(const Key('reportsQuickAction')));
+      await tester.pumpAndSettle();
+
+      // Verify we navigated away from dashboard by checking quick action card is gone
+      expect(find.byKey(const Key('reportsQuickAction')), findsNothing,
+          reason: 'Quick action card should no longer be visible after navigation');
+    });
   });
 }

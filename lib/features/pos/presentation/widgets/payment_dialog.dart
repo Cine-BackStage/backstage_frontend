@@ -92,6 +92,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
               ),
               const SizedBox(height: 8),
               Wrap(
+                key: const Key('paymentMethodDropdown'),
                 spacing: 8,
                 runSpacing: 8,
                 children: PaymentMethod.values.map((method) {
@@ -155,6 +156,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
               // Amount input
               TextFormField(
+                key: const Key('paymentAmountField'),
                 controller: _amountController,
                 decoration: const InputDecoration(
                   labelText: 'Valor',
@@ -204,6 +206,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
           child: const Text('Cancelar'),
         ),
         FilledButton(
+          key: const Key('addPaymentConfirmButton'),
           onPressed: _handleAddPayment,
           child: const Text('Adicionar'),
         ),

@@ -240,6 +240,7 @@ class SeatMapGrid extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(1.5),
       child: InkWell(
+        key: Key('seat_${seat.id}'),
         onTap: canTap && onSeatTap != null ? () => onSeatTap!(seat) : null,
         borderRadius: BorderRadius.circular(3),
         child: Container(

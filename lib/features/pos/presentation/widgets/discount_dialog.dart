@@ -39,6 +39,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              key: const Key('discountCodeField'),
               controller: _codeController,
               autofocus: true,
               decoration: InputDecoration(
@@ -86,6 +87,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
           child: const Text('Cancelar'),
         ),
         FilledButton.icon(
+          key: const Key('validateDiscountButton'),
           onPressed: _handleApply,
           icon: const Icon(Icons.check),
           label: const Text('Aplicar'),

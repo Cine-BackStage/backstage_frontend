@@ -41,6 +41,7 @@ class ProductGrid extends StatelessWidget {
     }
 
     return GridView.builder(
+      key: const Key('productGrid'),
       padding: const EdgeInsets.all(16),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -87,6 +88,7 @@ class _ProductCard extends StatelessWidget {
     final availableStock = product.qtyOnHand - quantityInCart;
 
     return Card(
+      key: Key('product_${product.sku}'),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: hasActiveSale
