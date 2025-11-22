@@ -592,3 +592,122 @@ class PosMockResponses {
     };
   }
 }
+
+/// Predefined mock responses for reports flow
+class ReportMockResponses {
+  static const detailedSalesResponse = {
+    'success': true,
+    'period': {
+      'startDate': '2024-01-01T00:00:00Z',
+      'endDate': '2024-01-31T23:59:59Z',
+      'groupBy': 'day'
+    },
+    'summary': {
+      'totalSales': 450,
+      'totalRevenue': 345120.00,
+      'totalDiscount': 12450.50,
+      'averageSaleValue': 767.15
+    },
+    'groupedData': [
+      {
+        'date': '2024-01-01',
+        'salesCount': 15,
+        'revenue': 12450.00,
+        'label': '01/01/2024'
+      },
+      {
+        'date': '2024-01-02',
+        'salesCount': 18,
+        'revenue': 14890.00,
+        'label': '02/01/2024'
+      },
+      {
+        'date': '2024-01-03',
+        'salesCount': 20,
+        'revenue': 16780.00,
+        'label': '03/01/2024'
+      }
+    ]
+  };
+
+  static const ticketSalesResponse = {
+    'success': true,
+    'period': {
+      'startDate': '2024-01-01T00:00:00Z',
+      'endDate': '2024-01-31T23:59:59Z',
+      'groupBy': 'movie'
+    },
+    'summary': {
+      'totalTickets': 2847,
+      'totalRevenue': 99645.00,
+      'averageTicketPrice': 35.00,
+      'cancelledTickets': 42
+    },
+    'groupedData': [
+      {
+        'movieTitle': 'Inception',
+        'ticketCount': 450,
+        'revenue': 15750.00,
+        'label': 'Inception'
+      },
+      {
+        'movieTitle': 'The Matrix',
+        'ticketCount': 380,
+        'revenue': 13300.00,
+        'label': 'The Matrix'
+      },
+      {
+        'movieTitle': 'Interstellar',
+        'ticketCount': 520,
+        'revenue': 18200.00,
+        'label': 'Interstellar'
+      }
+    ]
+  };
+
+  static const employeeReportResponse = {
+    'success': true,
+    'period': {
+      'startDate': '2024-01-01T00:00:00Z',
+      'endDate': '2024-01-31T23:59:59Z'
+    },
+    'summary': {
+      'totalEmployees': 5,
+      'activeCashiers': 4,
+      'averageRevenue': 69024.00,
+      'totalRevenue': 345120.00
+    },
+    'employees': [
+        {
+          'cpf': '123.456.789-00',
+          'name': 'John Doe',
+          'role': 'CASHIER',
+          'salesCount': 127,
+          'totalRevenue': 89350.75,
+          'averageSaleValue': 703.55,
+          'hoursWorked': 160,
+          'performance': 95.5
+        },
+        {
+          'cpf': '987.654.321-00',
+          'name': 'Jane Smith',
+          'role': 'CASHIER',
+          'salesCount': 98,
+          'totalRevenue': 72890.50,
+          'averageSaleValue': 743.78,
+          'hoursWorked': 160,
+          'performance': 92.3
+        },
+        {
+          'cpf': '456.789.123-00',
+          'name': 'Bob Johnson',
+          'role': 'CASHIER',
+          'salesCount': 115,
+          'totalRevenue': 83450.25,
+          'averageSaleValue': 725.65,
+          'hoursWorked': 160,
+          'performance': 88.7
+        }
+      ]
+  };
+}
