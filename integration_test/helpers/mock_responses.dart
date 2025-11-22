@@ -447,7 +447,9 @@ class PosMockResponses {
         'durationMin': 148,
         'genre': 'Sci-Fi',
         'rating': 'PG-13',
-        'isActive': true
+        'isActive': true,
+        'createdAt': '2024-01-01T00:00:00Z',
+        'updatedAt': '2024-01-01T00:00:00Z'
       },
       {
         'id': 'movie-uuid-2',
@@ -455,7 +457,9 @@ class PosMockResponses {
         'durationMin': 136,
         'genre': 'Sci-Fi',
         'rating': 'R',
-        'isActive': true
+        'isActive': true,
+        'createdAt': '2024-01-01T00:00:00Z',
+        'updatedAt': '2024-01-01T00:00:00Z'
       }
     ]
   };
@@ -468,17 +472,91 @@ class PosMockResponses {
         'id': 'room-uuid-1',
         'name': 'Sala 1',
         'capacity': 100,
-        'roomType': 'STANDARD',
-        'isActive': true
+        'roomType': 'TWO_D',
+        'isActive': true,
+        'createdAt': '2024-01-01T00:00:00Z',
+        'updatedAt': '2024-01-01T00:00:00Z'
       },
       {
         'id': 'room-uuid-2',
         'name': 'Sala 2',
         'capacity': 150,
-        'roomType': 'PREMIUM',
-        'isActive': true
+        'roomType': 'THREE_D',
+        'isActive': true,
+        'createdAt': '2024-01-01T00:00:00Z',
+        'updatedAt': '2024-01-01T00:00:00Z'
       }
     ]
+  };
+
+  // POST /api/movies - Create movie
+  static const createMovieResponse = {
+    'success': true,
+    'data': {
+      'id': 'movie-uuid-new',
+      'title': 'The Dark Knight',
+      'durationMin': 152,
+      'genre': 'Action',
+      'rating': '10',
+      'isActive': true,
+      'createdAt': '2024-01-15T00:00:00Z',
+      'updatedAt': '2024-01-15T00:00:00Z'
+    }
+  };
+
+  // PUT /api/movies/{movieId} - Update movie
+  static const updateMovieResponse = {
+    'success': true,
+    'data': {
+      'id': 'movie-uuid-1',
+      'title': 'Inception - Updated',
+      'durationMin': 148,
+      'genre': 'Sci-Fi',
+      'rating': 'PG-13',
+      'isActive': true,
+      'createdAt': '2024-01-01T00:00:00Z',
+      'updatedAt': '2024-01-15T10:00:00Z'
+    }
+  };
+
+  // DELETE /api/movies/{movieId} - Delete movie
+  static const deleteMovieResponse = {
+    'success': true,
+    'message': 'Filme deletado com sucesso'
+  };
+
+  // POST /api/rooms - Create room
+  static const createRoomResponse = {
+    'success': true,
+    'data': {
+      'id': 'room-uuid-new',
+      'name': 'Sala 3',
+      'capacity': 80,
+      'roomType': 'TWO_D',
+      'isActive': true,
+      'createdAt': '2024-01-15T00:00:00Z',
+      'updatedAt': '2024-01-15T00:00:00Z'
+    }
+  };
+
+  // PUT /api/rooms/{roomId} - Update room
+  static const updateRoomResponse = {
+    'success': true,
+    'data': {
+      'id': 'room-uuid-1',
+      'name': 'Sala 1 - Updated',
+      'capacity': 100,
+      'roomType': 'TWO_D',
+      'isActive': true,
+      'createdAt': '2024-01-01T00:00:00Z',
+      'updatedAt': '2024-01-15T10:00:00Z'
+    }
+  };
+
+  // DELETE /api/rooms/{roomId} - Delete room
+  static const deleteRoomResponse = {
+    'success': true,
+    'message': 'Sala deletada com sucesso'
   };
 
   // GET /api/sales/{saleId} - Get sale details
